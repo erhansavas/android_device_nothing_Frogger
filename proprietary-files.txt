@@ -1411,6 +1411,8 @@ vendor/lib64/libshsc.so
 
 # NTF
 system_ext/lib64/libntf.so;SYMLINK=system_ext/priv-app/qcrilmsgtunnel/lib/arm64/libntf.so
+vendor/bin/ntf-service
+vendor/etc/init/init.ntf.rc
 
 # PD
 vendor/bin/pd-mapper
