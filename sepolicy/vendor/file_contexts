@@ -11,3 +11,6 @@
 # NTF
 /dev/ntfeature             u:object_r:vendor_ntf_file:s0
 /vendor/bin/ntf-service    u:object_r:vendor_ntf_exec:s0
+
+# Partitions
+/dev/block/platform/soc/1d84000\.ufshc/by-name/vbmeta_vendor_[ab]    u:object_r:vendor_custom_ab_block_device:s0
