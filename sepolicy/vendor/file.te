@@ -1,5 +1,8 @@
 # Camera
 type vendor_proc_reserve_pool, fs_type, proc_type;
 
+# Charging
+type vendor_proc_power_supply, fs_type, proc_type;
+
 # NFC
 type vendor_sysfs_nfc, fs_type, sysfs_type;
