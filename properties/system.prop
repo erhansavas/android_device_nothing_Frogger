@@ -1,0 +1,31 @@
+# Audio
+ro.audio.monitorRotation=true
+
+# Charger
+ro.charger.enable_suspend=1
+
+# CNE
+persist.vendor.cne.feature=1
+
+# eSIM
+masterclear.allow_retain_esim_profiles_after_fdr=1
+
+# HWUI
+debug.hwui.skia_atrace_enabled=false
+
+# Media
+media.stagefright.thumbnail.prefer_hw_codecs=true
+ro.media.recorder-max-base-layer-fps=60
+ro.media.xml_variant.profiles=_volcano_v1
+
+# QTI
+ro.vendor.qti.va_aosp.support=1
+
+# Radio
+persist.vendor.data.mode=concurrent
+
+# System properties
+ro.product.property_source_order=odm,vendor,product,system_ext,system
+
+# WiFi display
+persist.debug.wfd.enable=1
