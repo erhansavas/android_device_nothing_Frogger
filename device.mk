@@ -183,7 +183,8 @@ PRODUCT_PACKAGES += \
 
 # Fingerprint
 PRODUCT_PACKAGES += \
-    android.hardware.biometrics.fingerprint-service.nothing
+    android.hardware.biometrics.fingerprint-service.nothing \
+    libudfpshandler
 
 $(call soong_config_set,NOTHING_BIOMETRICS_FINGERPRINT,IMPL_VER,V2)
 
