@@ -1,1 +1,7 @@
+allow hal_camera_default nt_cam_device:chr_file rw_file_perms;
 allow hal_camera_default vendor_ntf_file:file r_file_perms;
+
+# Nothing camera memory reserve pool and memory stats
+allow hal_camera_default proc_meminfo:file r_file_perms;
+allow hal_camera_default vendor_proc_reserve_pool:dir search;
+allow hal_camera_default vendor_proc_reserve_pool:file rw_file_perms;

@@ -1,8 +1,14 @@
 # Battery
 genfscon proc /charger/usb_charger_en    u:object_r:vendor_proc_power_supply:s0
 
+# Camera
+genfscon proc /reserve_pool    u:object_r:vendor_proc_reserve_pool:s0
+
 # Display
 genfscon sysfs /panel_feature/panel_id1    u:object_r:vendor_sysfs_graphics:s0
+
+# NFC
+genfscon sysfs /devices/platform/soc/ac0000.qcom,qupv3_0_geni_se/a84000.i2c/i2c-1/1-0008/hw_version    u:object_r:vendor_sysfs_nfc:s0
 
 # Vibrator
 genfscon sysfs /devices/platform/soc/8c0000.qcom,qupv3_1_geni_se/884000.i2c/i2c-8/8-005f/leds/vibrator_nt    u:object_r:sysfs_leds:s0
@@ -12,3 +18,4 @@ genfscon sysfs /devices/platform/soc/8c0000.qcom,qupv3_1_geni_se/880000.i2c/i2c-
 genfscon sysfs /devices/platform/soc/soc:goodix_fp/wakeup                                                    u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/ac0000.qcom,qupv3_0_geni_se/a80000.spi/spi_master/spi0/spi0.0/wakeup    u:object_r:sysfs_wakeup:s0
 genfscon sysfs /devices/platform/soc/soc:qcom,dsi-display-primary/wakeup                                     u:object_r:sysfs_wakeup:s0
+genfscon sysfs /devices/platform/soc/ac0000.qcom,qupv3_0_geni_se/a80000.i2c/i2c-0/0-0038/wakeup              u:object_r:sysfs_wakeup:s0

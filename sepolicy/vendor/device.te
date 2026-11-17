@@ -1,0 +1,5 @@
+# Camera
+type nt_cam_device, dev_type;
+
+# NTF
+type vendor_ntf_file, dev_type;
