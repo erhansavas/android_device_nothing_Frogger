@@ -1,0 +1,2 @@
+# Optical sensor: libgf_hal reads the panel brightness
+r_dir_file(hal_fingerprint_default, vendor_sysfs_graphics)
