@@ -284,8 +284,6 @@
     <bool name="config_setColorTransformAccelerated">true</bool>
     <!-- Write idle zram pages to the backing file on flash, as stock -->
     <bool name="config_zramWriteback">true</bool>
-    <!-- The touch firmware reports a double tap while the screen is off -->
-    <bool name="config_supportDoubleTapWake">true</bool>
     <!-- Doze as stock: enter doze right after screen off, with the stock doze brightness -->
     <bool name="config_dozeAfterScreenOff">true</bool>
     <integer name="config_screenBrightnessDoze">17</integer>
