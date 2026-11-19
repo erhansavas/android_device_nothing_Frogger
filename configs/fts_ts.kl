@@ -1,8 +1,0 @@
-#
-# SPDX-FileCopyrightText: The LineageOS Project
-# SPDX-License-Identifier: Apache-2.0
-#
-
-# Touch panel gestures while the screen is off. The firmware reports a double tap as KEY_U;
-# the single tap (KEY_WAKEUP) and the other gestures stay unmapped.
-key 22    WAKEUP
