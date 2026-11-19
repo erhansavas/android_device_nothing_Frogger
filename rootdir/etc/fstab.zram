@@ -1,0 +1,2 @@
+# zram swap, sized as stock (75% of RAM, 2 GiB writeback backing file)
+/dev/block/zram0    none    swap    defaults    zramsize=75%,max_comp_streams=8,zram_backingdev_size=2147483648

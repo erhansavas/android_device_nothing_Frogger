@@ -3,6 +3,7 @@
      SPDX-License-Identifier: Apache-2.0
 -->
 <compatibility-matrix version="1.0" type="framework">
+    <!-- Biometrics -->
     <hal format="aidl" optional="true">
         <name>vendor.goodix.hardware.biometrics.fingerprint</name>
         <interface>

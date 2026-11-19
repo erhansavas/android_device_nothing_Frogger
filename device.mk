@@ -67,32 +67,18 @@ PRODUCT_PACKAGES += \
     android.hardware.audio.service \
     android.hardware.soundtrigger@2.3-impl
 
+# The primary HAL, PAL, AGM and their plugins are the stock blobs (Audio OSS in proprietary-files.txt):
+# Nothing builds them with its aw882xx speaker changes, which the CAF sources lack.
 PRODUCT_PACKAGES += \
     audio.bluetooth.default \
-    audio.primary.volcano \
     audio.r_submix.default \
     audio.usb.default \
     sound_trigger.primary.volcano
 
+# The stock audioadsprpcd needs its init service; the source rc is identical to the stock one and
+# cannot be listed as a blob (its install path belongs to the source module).
 PRODUCT_PACKAGES += \
-    audioadsprpcd
-
-PRODUCT_PACKAGES += \
-    lib_bt_aptx \
-    lib_bt_ble \
-    lib_bt_bundle \
-    libagm_compress_plugin \
-    libagm_mixer_plugin \
-    libagm_pcm_plugin \
-    libbatterylistener \
-    libcustomva_intf \
-    libfmpal \
-    libhfp_pal \
-    libhotword_intf \
-    libqcompostprocbundle \
-    libqcomvisualizer \
-    libqcomvoiceprocessing \
-    libvolumelistener
+    vendor.qti.audio-adsprpc-service.rc
 
 CONFIG_SKU_OUT_DIR := $(TARGET_COPY_OUT_VENDOR)/etc/audio/sku_volcano
 
@@ -165,15 +151,15 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     hardware/qcom-caf/sm8650/display/config/snapdragon_color_libs_config.xml:$(TARGET_COPY_OUT_VENDOR)/etc/snapdragon_color_libs_config.xml
 
+# Doze
+PRODUCT_PACKAGES += \
+    NothingDoze
+
 # DRM
 PRODUCT_PACKAGES += \
     android.hardware.drm-service.clearkey
 
 # e-SIM
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/euicc/default-permissions_com.google.android.euicc.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/default-permissions/default-permissions_com.google.android.euicc.xml \
-    $(LOCAL_PATH)/euicc/privapp_allowlist_com.google.android.euicc.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/privapp_allowlist_com.google.android.euicc.xml
-
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.telephony.euicc.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_JPN/android.hardware.telephony.euicc.xml
 
@@ -198,7 +184,14 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/etc/fstab.default:$(TARGET_COPY_OUT_VENDOR)/etc/fstab.default \
     $(LOCAL_PATH)/rootdir/etc/fstab.default:$(TARGET_COPY_OUT_RECOVERY)/root/first_stage_ramdisk/fstab.default \
-    $(LOCAL_PATH)/rootdir/etc/fstab.default:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.default
+    $(LOCAL_PATH)/rootdir/etc/fstab.default:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.default \
+    $(LOCAL_PATH)/rootdir/etc/fstab.zram:$(TARGET_COPY_OUT_VENDOR)/etc/fstab.zram
+
+# Glyph
+$(call soong_config_set,nothing_glyph,device,phone4a)
+
+PRODUCT_PACKAGES += \
+    ParanoidGlyph
 
 # GPS
 PRODUCT_COPY_FILES += \
@@ -220,7 +213,13 @@ PRODUCT_PACKAGES += \
     android.hardware.health-service.qti_recovery
 
 # Lineage Health
-$(call soong_config_set,lineage_health,charging_control_charging_path,/proc/charger/usb_charger_en)
+# The charge current cap in mA (the charger firmware default is 10000). At 0 the battery idles while the
+# input keeps powering the phone (measured: battery -2 mA, input 180 mA), a real bypass. The other node,
+# usb_charger_en, cuts the input and lets the battery discharge.
+$(call soong_config_set,lineage_health,charging_control_charging_path,/proc/charger/scenario_fcc)
+$(call soong_config_set,lineage_health,charging_control_charging_enabled,10000)
+$(call soong_config_set,lineage_health,charging_control_charging_disabled,0)
+$(call soong_config_set_bool,lineage_health,charging_control_supports_bypass,true)
 
 PRODUCT_PACKAGES += \
     vendor.lineage.health-service.default
@@ -239,7 +238,12 @@ PRODUCT_PACKAGES += \
 
 # Keylayout
 PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/fts_ts.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/fts_ts.kl \
     $(LOCAL_PATH)/configs/gpio-keys.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/gpio-keys.kl
+
+# Lights
+PRODUCT_PACKAGES += \
+    android.hardware.lights-service.glyph
 
 # Media
 PRODUCT_COPY_FILES += \
@@ -283,6 +287,7 @@ PRODUCT_COPY_FILES += \
 
 # Overlays
 PRODUCT_PACKAGES += \
+    ApertureResFrogger \
     CarrierConfigResCommon_Sys \
     FrameworksResCommon_Sys \
     SettingsResCommon_Sys \
@@ -297,6 +302,9 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     NcmTetheringOverlay
+
+DEVICE_PACKAGE_OVERLAYS += \
+    $(LOCAL_PATH)/overlay-lineage
 
 # Partitions
 PRODUCT_PACKAGES += \
@@ -315,8 +323,7 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     android.hardware.power-service-qti
 
-PRODUCT_COPY_FILES += \
-    vendor/qcom/opensource/power/config/volcano/powerhint.xml:$(TARGET_COPY_OUT_VENDOR)/etc/powerhint.xml
+$(call soong_config_set,qtipower,tap_to_wake_node,/proc/touchpanel/gesture_mode)
 
 # QSPA
 PRODUCT_PACKAGES += \
