@@ -36,6 +36,7 @@ lib_fixups: lib_fixups_user_type = {
     **lib_fixups,
     (
         'com.qualcomm.qti.dpm.api@1.0',
+        'libntf',
         'vendor.qti.diaghal@1.0',
         'vendor.qti.hardware.dpmaidlservice-V1-ndk',
         'vendor.qti.hardware.qccsyshal@1.0',
@@ -66,6 +67,7 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/bin/xtra-daemon',
         'vendor/lib64/libcne.so',
         'vendor/lib64/libqcc_sdk.so',
+        'vendor/lib64/libqms_client.so',
     ): blob_fixup()
         .add_needed('libbinder_shim.so'),
     (
@@ -84,7 +86,9 @@ blob_fixups: blob_fixups_user_type = {
         'libtensorflowlite_c_vendor.so',
     ),
     (
+        'vendor/bin/poweropt-service',
         'vendor/lib64/libdpps.so',
+        'vendor/lib64/libpowercore.so',
         'vendor/lib64/libsnapdragoncolor-manager.so',
     ): blob_fixup()
         .replace_needed('libtinyxml2.so', 'libtinyxml2-v34.so'),
@@ -188,7 +192,10 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/lib64/libmmcamera_lscv35.so',
         'vendor/lib64/libmmcamera_mfnr.so',
         'vendor/lib64/libmmcamera_mfnr_t4.so',
+        'vendor/lib64/libmctfengine_stub.so',
+        'vendor/lib64/libmfec.so',
         'vendor/lib64/libmmcamera_pdpc.so',
+        'vendor/lib64/libmmcamera_pnc.so',
         'vendor/lib64/libopestriping.so',
         'vendor/lib64/libtfestriping.so',
         'vendor/lib64/libubifocus.so',
