@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <!-- Lens shortcuts of the logical back camera (camera ID, approximate zoom ratio, exact zoom ratio):
+         ultrawide at 0.6x, telephoto from 3.5x (TeleZoomStart in the stock camera settings). -->
+    <string-array name="config_logicalZoomRatios">
+        <item>0</item> <item>0.6</item> <item>0.6</item>
+        <item>0</item> <item>3.5</item> <item>3.5</item>
+    </string-array>
+</resources>
