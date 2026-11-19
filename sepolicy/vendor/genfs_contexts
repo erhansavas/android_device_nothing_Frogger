@@ -1,11 +1,14 @@
 # Battery
-genfscon proc /charger/usb_charger_en    u:object_r:vendor_proc_power_supply:s0
+genfscon proc /charger/scenario_fcc      u:object_r:vendor_proc_power_supply:s0
 
 # Camera
 genfscon proc /reserve_pool    u:object_r:vendor_proc_reserve_pool:s0
 
 # Display
 genfscon sysfs /panel_feature/panel_id1    u:object_r:vendor_sysfs_graphics:s0
+
+# Lights
+genfscon sysfs /devices/platform/soc/8c0000.qcom,qupv3_1_geni_se/880000.i2c/i2c-7/7-003a/leds/aw20036_led    u:object_r:sysfs_leds:s0
 
 # NFC
 genfscon sysfs /devices/platform/soc/ac0000.qcom,qupv3_0_geni_se/a84000.i2c/i2c-1/1-0008/hw_version    u:object_r:vendor_sysfs_nfc:s0
