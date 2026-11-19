@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     SPDX-FileCopyrightText: The LineageOS Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+    <!-- The cap node reads 0 until it is first written, so always write the wanted state -->
+    <bool name="config_chargingControlToggleSetAlways">true</bool>
+
+    <!-- Hardware keys present on the device, stored as a bit field:
+         8 (assist, the Essential Key) + 64 (volume rocker). -->
+    <integer name="config_deviceHardwareKeys">72</integer>
+
+    <!-- Hardware keys present on the device with the ability to wake, stored as a bit field. -->
+    <integer name="config_deviceHardwareWakeKeys">72</integer>
+
+    <!-- Whether device has screen with higher aspect ratio -->
+    <bool name="config_haveHigherAspectRatioScreen">true</bool>
+
+    <!-- Offer the proximity check on wake (prevents accidental wake-ups in a pocket) -->
+    <bool name="config_proximityCheckOnWake">true</bool>
+</resources>

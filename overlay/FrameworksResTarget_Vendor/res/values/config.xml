@@ -68,13 +68,7 @@
     <string name="config_mainDisplayShape">M5.1,2588.2L7.6,2601.4L11.1,2614.4L15.7,2627L21.5,2639.3L28.2,2650.6L35.9,2661.4L44.6,2671.5L54.1,2680.7L64.5,2689L74.7,2695.9L85.6,2701.9L96.8,2707L108.4,2711.1L119.4,2714.1L130.6,2716.3L141.8,2717.8L150.3,2718.5L158.7,2718.9L178.9,2719.1L1045.1,2719.1L1065.3,2718.9L1073.7,2718.5L1082.2,2717.8L1093.4,2716.3L1104.6,2714.1L1115.6,2711.1L1127.2,2707L1138.4,2701.9L1149.3,2695.9L1159.5,2689L1169.9,2680.7L1179.4,2671.5L1188.1,2661.4L1195.8,2650.6L1202.5,2639.3L1208.3,2627L1212.9,2614.4L1216.4,2601.4L1218.9,2588.2L1220.6,2572.8L1221.1,2562.6L1221.3,2542.3L1221.3,177.8L1221.1,157.4L1220.6,147.2L1218.9,131.8L1216.4,118.7L1212.9,105.7L1208.3,93L1202.5,80.8L1195.8,69.4L1188.1,58.6L1179.4,48.5L1169.9,39.3L1159.5,31L1149.3,24.1L1138.4,18.1L1127.2,13L1115.6,8.9L1104.6,5.9L1093.4,3.7L1082.2,2.3L1073.7,1.5L1065.3,1.1L1045.1,0.9L178.9,0.9L158.7,1.1L150.3,1.5L141.8,2.3L130.6,3.7L119.4,5.9L108.4,8.9L96.8,13L85.6,18.1L74.7,24.1L64.5,31L54.1,39.3L44.6,48.5L35.9,58.6L28.2,69.4L21.5,80.8L15.7,93L11.1,105.7L7.6,118.7L5.1,131.8L3.4,147.2L2.9,157.4L2.7,177.8L2.7,2542.3L2.9,2562.6L3.4,2572.8ZM5.1,2588.2 @left</string>
 
     <!-- Display white balance -->
-    <bool name="config_displayWhiteBalanceAvailable">true</bool>
-    <bool name="config_displayWhiteBalanceEnabledDefault">true</bool>
-    <integer name="config_displayWhiteBalanceColorTemperatureDefault">6500</integer>
-    <integer name="config_displayWhiteBalanceColorTemperatureMax">7400</integer>
-    <integer name="config_displayWhiteBalanceColorTemperatureMin">4300</integer>
-    <integer name="config_displayWhiteBalanceTransitionTimeDecrease">3000</integer>
-    <integer name="config_displayWhiteBalanceTransitionTimeIncrease">3000</integer>
+    <bool name="config_displayWhiteBalanceAvailable">false</bool>
 
     <!-- Doze -->
     <bool name="config_dozeAlwaysOnDisplayAvailable">true</bool>
