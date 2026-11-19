@@ -5,6 +5,15 @@
 -->
 <carrier_config_list>
     <carrier_config>
+        <!-- 5G signal bars from SS-RSRP only. The AOSP defaults (-110, -90, -80, -65) show one bar at
+             -95 dBm, where the stock software shows a good signal. -->
+        <int-array name="5g_nr_ssrsrp_thresholds_int_array" num="4">
+            <item value="-115" />
+            <item value="-105" />
+            <item value="-95" />
+            <item value="-85" />
+        </int-array>
+        <int name="parameters_use_for_5g_nr_signal_bar_int" value="1" />
         <boolean name="apn_expand_bool" value="true" />
         <boolean name="world_phone_bool" value="false" />
         <boolean name="allow_adding_apns_bool" value="true" />
