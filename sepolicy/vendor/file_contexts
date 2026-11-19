@@ -1,3 +1,6 @@
+# Audio
+/dev/aw882xx_smartpa    u:object_r:nt_audio_aw_device:s0
+
 # Camera
 /dev/nt_cam_dev    u:object_r:nt_cam_device:s0
 
