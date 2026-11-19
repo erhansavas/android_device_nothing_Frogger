@@ -66,6 +66,8 @@ on boot
     chmod 0664 /sys/class/leds/aw20036_led/video_mode
     chown system system /sys/class/leds/aw20036_led/all_white_brightness
     chmod 0220 /sys/class/leds/aw20036_led/all_white_brightness
+    chown system system /sys/class/leds/aw20036_led/always_on
+    chmod 0664 /sys/class/leds/aw20036_led/always_on
     chown system system /sys/class/leds/aw20036_led/single_brightness
     chown system system /sys/class/leds/aw20036_led/vip_notification
     chown system system /sys/class/leds/aw20036_led/dev_color
@@ -73,6 +75,10 @@ on boot
     chmod 0444 /mnt/vendor/persist/color
 
 on post-fs-data
+    # Speaker amplifiers (the audio HAL tunes them through this node)
+    chown system audio /dev/aw882xx_smartpa
+    chmod 0660 /dev/aw882xx_smartpa
+
     # Fingerprint
     chown system system /dev/goodix_fp
     chmod 0660 /dev/goodix_fp
@@ -111,3 +117,6 @@ service weaver_hal_service /vendor/bin/hw/android.hardware.weaver-service.thales
     user vendor_thales_weaver
     group vendor_thales_weaver
     disabled
+
+on property:sys.boot_completed=1
+    swapon_all /vendor/etc/fstab.zram

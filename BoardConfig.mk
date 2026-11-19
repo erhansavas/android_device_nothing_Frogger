@@ -68,7 +68,7 @@ TARGET_FS_CONFIG_GEN := $(DEVICE_PATH)/config.fs
 BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_USES_GENERIC_KERNEL_IMAGE := true
 BOARD_USES_QCOM_MERGE_DTBS_SCRIPT := true
-TARGET_MERGE_DTBS_WILDCARD := *volcano*
+TARGET_MERGE_DTBS_WILDCARD := volcano
 
 BOARD_KERNEL_BASE        := 0x00000000
 BOARD_KERNEL_PAGESIZE    := 4096
@@ -90,7 +90,6 @@ BOARD_BOOTCONFIG := \
     androidboot.memcg=1 \
     androidboot.usbcontroller=a600000.dwc3 \
     androidboot.load_modules_parallel=true \
-    androidboot.vendor.qspa=true \
     androidboot.console=0
 
 # Kernel modules
@@ -205,18 +204,22 @@ TARGET_USERIMAGES_USE_F2FS := true
 ENABLE_VENDOR_RIL_SERVICE := true
 
 # Security patch level
-# Stock C5.0-261023-2145 (payload security_patch_level); AVB rollback indexes derive from it
-BOOT_SECURITY_PATCH := 2026-11-01
-VENDOR_SECURITY_PATCH := $(BOOT_SECURITY_PATCH)
+# Stock C5.0-261023-2145 (com.android.build.{boot,vendor}.security_patch in its vbmeta images).
+# KeyMint binds every key to these levels: never lower them, or existing installs lose their storage keys.
+BOOT_SECURITY_PATCH := 2026-11-05
+VENDOR_SECURITY_PATCH := 2026-04-05
 
 # Sepolicy
 include device/qcom/sepolicy_vndr/SEPolicy.mk
 include hardware/nothing/sepolicy/nt-sepolicy.mk
 
 BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
+SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/private
 
 # Verified Boot
-STOCK_SECURITY_PATCH_TIMESTAMP := $(shell date -d 'TZ="GMT" $(VENDOR_SECURITY_PATCH)' +%s)
+# Rollback indexes of stock C5.0-261023-2145: vbmeta_system 2026-11-01, boot and vbmeta_vendor 2026-04-05
+STOCK_SYSTEM_ROLLBACK_INDEX := $(shell date -d 'TZ="GMT" 2026-11-01' +%s)
+STOCK_VENDOR_ROLLBACK_INDEX := $(shell date -d 'TZ="GMT" $(VENDOR_SECURITY_PATCH)' +%s)
 BOARD_AVB_ENABLE := true
 
 ifneq (,$(AVB_CUSTOM_KEY_PATH))
@@ -227,8 +230,11 @@ AVB_CUSTOM_ALGORITHM := SHA256_RSA4096
 AVB_CUSTOM_KEY_PATH := external/avb/test/data/testkey_rsa4096.pem
 endif
 
+# Only the hashtree is disabled (flag 1), not the vbmeta verification (flag 2): with verification disabled
+# the bootloader cannot read com.android.build.boot.security_patch from the boot footer and hands KeyMint the
+# year and month of the boot header (boot patch level 202611 instead of 20261105) and no vbmeta digest.
 ifneq ($(WITH_AVB),true)
-BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 3
+BOARD_AVB_MAKE_VBMETA_IMAGE_ARGS += --flags 1
 endif
 
 BOARD_AVB_RECOVERY_ALGORITHM := $(AVB_CUSTOM_ALGORITHM)
@@ -240,18 +246,18 @@ BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
 BOARD_AVB_VBMETA_SYSTEM := init_boot system system_ext product pvmfw
 BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := $(AVB_CUSTOM_ALGORITHM)
 BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := $(AVB_CUSTOM_KEY_PATH)
-BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(STOCK_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(STOCK_SYSTEM_ROLLBACK_INDEX)
 BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX_LOCATION := 2
 
 BOARD_AVB_BOOT_ALGORITHM := $(AVB_CUSTOM_ALGORITHM)
 BOARD_AVB_BOOT_KEY_PATH := $(AVB_CUSTOM_KEY_PATH)
-BOARD_AVB_BOOT_ROLLBACK_INDEX := $(STOCK_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_BOOT_ROLLBACK_INDEX := $(STOCK_VENDOR_ROLLBACK_INDEX)
 BOARD_AVB_BOOT_ROLLBACK_INDEX_LOCATION := 3
 
 BOARD_AVB_VBMETA_VENDOR := odm system_dlkm vendor vendor_dlkm
 BOARD_AVB_VBMETA_VENDOR_ALGORITHM := $(AVB_CUSTOM_ALGORITHM)
 BOARD_AVB_VBMETA_VENDOR_KEY_PATH := $(AVB_CUSTOM_KEY_PATH)
-BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX := $(STOCK_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX := $(STOCK_VENDOR_ROLLBACK_INDEX)
 BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION := 4
 
 # VINTF
