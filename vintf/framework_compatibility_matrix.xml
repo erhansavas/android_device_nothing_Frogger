@@ -4,10 +4,9 @@
 -->
 <compatibility-matrix version="1.0" type="framework">
     <hal format="aidl" optional="true">
-        <name>vendor.tcl.camera.algoservice</name>
-        <version>2</version>
+        <name>vendor.goodix.hardware.biometrics.fingerprint</name>
         <interface>
-            <name>ITctCameraAlgoService</name>
+            <name>IGoodixFingerprintDaemon</name>
             <instance>default</instance>
         </interface>
     </hal>
