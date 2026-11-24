@@ -33,17 +33,11 @@
     <!-- If this is true, the screen will come on when you unplug usb/power/whatever. -->
     <bool name="config_unplugTurnsOnScreen">true</bool>
 
-    <!-- Default strength, in percentage, of bright color reduction when activated. -->
-    <integer name="config_reduceBrightColorsStrengthDefault">40</integer>
-
-    <!-- Maximum strength, in percentage, supported by bright color reduction. -->
-    <integer name="config_reduceBrightColorsStrengthMax">50</integer>
-
     <!-- Indicate available ColorDisplayManager.COLOR_MODE_xxx. -->
     <integer-array name="config_availableColorModes">
         <item>0</item>
-        <item>256</item>
-        <item>257</item>
+        <item>1</item>
+        <item>3</item>
     </integer-array>
 
     <!-- The following two arrays specify which color space to use for display composition when a
@@ -77,24 +71,6 @@
          The user is forbidden from setting the brightness above this level. -->
     <item name="config_screenBrightnessSettingMaximumFloat" format="float" type="dimen">1.0</item>
 
-    <!-- Default screen brightness setting set.
-         -2 is invalid so setting will resort to int value specified above.
-         Must be in the range specified by minimum and maximum. -->
-    <item name="config_screenBrightnessSettingDefaultFloat" format="float" type="dimen">0.4002442</item>
-
-    <!-- Screen brightness used to dim the screen while dozing in a very low power state.
-         May be less than the minimum allowed brightness setting
-         that can be set by the user. -->
-    <item name="config_screenBrightnessDozeFloat" format="float" type="dimen">0.06667</item>
-
-    <!-- Stability requirements in milliseconds for accepting a new brightness level.  This is used
-         for debouncing the light sensor.  Different constants are used to debounce the light sensor
-         when adapting to brighter or darker environments.  This parameter controls how quickly
-         brightness changes occur in response to an observed change in light level that exceeds the
-         hysteresis threshold. -->
-    <integer name="config_autoBrightnessBrighteningLightDebounce">500</integer>
-    <integer name="config_autoBrightnessDarkeningLightDebounce">1000</integer>
-
     <!-- Array of light sensor lux values to define our levels for auto backlight brightness support.
          The N entries of this array define N + 1 control points as follows:
          (1-based arrays)
@@ -116,112 +92,27 @@
 
          Must be overridden in platform specific overlays -->
     <integer-array name="config_autoBrightnessLevels">
-        <item>2</item>
-        <item>4</item>
+        <item>10</item>
+        <item>30</item>
+        <item>60</item>
+        <item>100</item>
+        <item>150</item>
+        <item>210</item>
+        <item>255</item>
+    </integer-array>
+
+    <!-- Array of output values for LCD backlight corresponding to the lux values
+         in the config_autoBrightnessLevels array. -->
+    <integer-array name="config_autoBrightnessLcdBacklightValues">
         <item>10</item>
         <item>20</item>
         <item>40</item>
-        <item>100</item>
-        <item>200</item>
-        <item>500</item>
-        <item>1000</item>
-        <item>2000</item>
-        <item>3000</item>
-        <item>4000</item>
-        <item>5000</item>
-        <item>6000</item>
-        <item>8000</item>
-        <item>10000</item>
-        <item>20000</item>
-    </integer-array>
-
-    <!-- Array of desired screen brightness in nits corresponding to the lux values
-         in the config_autoBrightnessLevels array. The display brightness is defined as the measured
-         brightness of an all-white image.
-
-         If this is defined then:
-            - config_autoBrightnessLcdBacklightValues should not be defined
-            - config_screenBrightnessNits must be defined
-            - config_screenBrightnessBacklight must be defined
-
-         This array should have size one greater than the size of the config_autoBrightnessLevels
-         array. The brightness values must be non-negative and non-decreasing. This must be
-         overridden in platform specific overlays -->
-    <array name="config_autoBrightnessDisplayValuesNits">
-        <item>3</item>
-        <item>7</item>
-        <item>10</item>
-        <item>24</item>
-        <item>64</item>
-        <item>82</item>
-        <item>90</item>
-        <item>100</item>
-        <item>120</item>
-        <item>170</item>
-        <item>280</item>
-        <item>350</item>
-        <item>400</item>
-        <item>450</item>
-        <item>500</item>
-        <item>580</item>
-        <item>650</item>
-        <item>800</item>
-    </array>
-
-    <!-- An array describing the screen's backlight values corresponding to the brightness
-         values in the config_screenBrightnessNits array.
-
-         This array should be equal in size to config_screenBrightnessBacklight. -->
-    <integer-array name="config_screenBrightnessBacklight">
-        <item>1</item>
-        <item>250</item>
-        <item>365</item>
-        <item>450</item>
-        <item>645</item>
-        <item>670</item>
-        <item>710</item>
-        <item>793</item>
-        <item>865</item>
-        <item>1010</item>
-        <item>1280</item>
-        <item>1415</item>
-        <item>1505</item>
-        <item>1580</item>
-        <item>1650</item>
-        <item>1770</item>
-        <item>1865</item>
-        <item>2048</item>
-        <item>4095</item>
-    </integer-array>
-
-    <!-- An array of floats describing the screen brightness in nits corresponding to the backlight
-         values in the config_screenBrightnessBacklight array.  On OLED displays these  values
-         should be measured with an all white image while the display is in the fully on state.
-         Note that this value should *not* reflect the maximum brightness value for any high
-         brightness modes but only the maximum brightness value obtainable in a sustainable manner.
-
-         This array should be equal in size to config_screenBrightnessBacklight -->
-    <array name="config_screenBrightnessNits">
-        <item>2</item>
-        <item>10</item>
-        <item>20</item>
-        <item>31</item>
-        <item>65</item>
         <item>70</item>
-        <item>80</item>
-        <item>100</item>
-        <item>120</item>
-        <item>170</item>
-        <item>280</item>
-        <item>350</item>
-        <item>400</item>
-        <item>450</item>
-        <item>500</item>
-        <item>580</item>
-        <item>650</item>
-        <item>800</item>
-        <item>1400</item>
-    </array>
+        <item>110</item>
+        <item>160</item>
+        <item>200</item>
+        <item>255</item>
+    </integer-array>
 
     <!-- The default volume for the notification stream -->
     <integer name="config_audio_notif_vol_default">4</integer>
@@ -299,11 +190,9 @@
     -->
     <string-array name="config_telephonyEuiccDeviceCapabilities" translatable="false">
         <item>gsm,9</item>
-        <item>utran,10</item>
+        <item>utran,9</item>
         <item>eutran,16</item>
-        <item>nrepc,16</item>
-        <item>nr5gc,16</item>
-        <item>eutran5gc,16</item>
+        <item>crl,2.5</item>
     </string-array>
 
     <!-- Flag specifying whether VoLTE is available on device -->
@@ -391,4 +280,6 @@
 
     <!-- Whether to select voice/data/sms preference without user confirmation -->
     <bool name="config_voice_data_sms_auto_fallback">true</bool>
+    <!-- Whether the display HAL accelerates color transforms. -->
+    <bool name="config_setColorTransformAccelerated">true</bool>
 </resources>

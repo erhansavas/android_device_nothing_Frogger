@@ -77,4 +77,8 @@
     <string-array name="config_wifiCharsetsForSsidTranslation" translatable="false">
         <item>zh,GBK</item>
     </string-array>
+
+    <bool name="config_wifiUpdateCountryCodeFromScanResultGeneric">true</bool>
+    <integer name="config_wifiBssidBlocklistMonitorApUnableToHandleNewStaThreshold">3</integer>
+    <integer name="config_wifiFrameworkUnmeteredNetworkBonus">0</integer>
 </resources>
