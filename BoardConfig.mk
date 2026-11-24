@@ -19,6 +19,7 @@ AB_OTA_PARTITIONS += \
     system_ext \
     vbmeta \
     vbmeta_system \
+    vbmeta_vendor \
     vendor \
     vendor_boot \
     vendor_dlkm
@@ -67,14 +68,19 @@ TARGET_FS_CONFIG_GEN := $(DEVICE_PATH)/config.fs
 BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_USES_GENERIC_KERNEL_IMAGE := true
 BOARD_USES_QCOM_MERGE_DTBS_SCRIPT := true
+TARGET_MERGE_DTBS_WILDCARD := *volcano*
 
 BOARD_KERNEL_BASE        := 0x00000000
 BOARD_KERNEL_PAGESIZE    := 4096
 
 TARGET_KERNEL_SOURCE := kernel/nothing/sm7635
+# Nothing's build: build.config.msm.gki (VARIANT gki) plus build.config.nothing.Frogger
 TARGET_KERNEL_CONFIG := \
     gki_defconfig \
-    vendor/fps_GKI.config
+    vendor/pineapple_GKI.config \
+    vendor/Frogger.config
+# As build.config.nothing.Frogger does
+TARGET_KERNEL_ADDITIONAL_FLAGS := NT_PROJECT=Frogger
 
 BOARD_KERNEL_CMDLINE := \
     nosoftlockup \
@@ -84,6 +90,7 @@ BOARD_BOOTCONFIG := \
     androidboot.memcg=1 \
     androidboot.usbcontroller=a600000.dwc3 \
     androidboot.load_modules_parallel=true \
+    androidboot.vendor.qspa=true \
     androidboot.console=0
 
 # Kernel modules
@@ -121,7 +128,6 @@ TARGET_KERNEL_EXT_MODULES := \
     qcom/opensource/wlan/platform
 
 TARGET_KERNEL_EXT_MODULES += \
-    nxp/opensource/driver \
     qcom/opensource/audio-kernel \
     qcom/opensource/bt-kernel \
     qcom/opensource/camera-kernel \
@@ -133,6 +139,7 @@ TARGET_KERNEL_EXT_MODULES += \
     qcom/opensource/datarmnet-ext/wlan \
     qcom/opensource/display-drivers/msm \
     qcom/opensource/eva-kernel \
+    qcom/opensource/fingerprint \
     qcom/opensource/graphics-kernel \
     qcom/opensource/mm-sys-kernel/ubwcp \
     qcom/opensource/spu-kernel \
@@ -140,8 +147,7 @@ TARGET_KERNEL_EXT_MODULES += \
     qcom/opensource/video-driver \
     qcom/opensource/wlan/qcacld-3.0/.peach_v2 \
     qcom/opensource/wlan/qcacld-3.0/.qca6750 \
-    qcom/opensource/wlan/qcacld-3.0/.wcn6450 \
-    samsung_slsi/nfc/driver
+    qcom/opensource/wlan/qcacld-3.0/.wcn6450
 
 # Metadata
 BOARD_USES_METADATA_PARTITION := true
@@ -149,7 +155,7 @@ BOARD_USES_METADATA_PARTITION := true
 # Partitions
 BOARD_FLASH_BLOCK_SIZE := 0x020000 # (BOARD_KERNEL_PAGESIZE * 64)
 BOARD_BOOTIMAGE_PARTITION_SIZE := 0x06000000
-BOARD_DTBOIMG_PARTITION_SIZE := 0x01E00000
+BOARD_DTBOIMG_PARTITION_SIZE := 0x01700000
 BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE := 0x800000
 BOARD_PVMFWIMAGE_PARTITION_SIZE := 0x100000
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 0x06400000
@@ -177,15 +183,15 @@ TARGET_COPY_OUT_VENDOR_DLKM := vendor_dlkm
 
 -include vendor/lineage/config/BoardConfigReservedSize.mk
 
+# QCOM
+BOARD_USES_QCOM_HARDWARE := true
+
 # Properties
 TARGET_ODM_PROP += $(DEVICE_PATH)/properties/odm.prop
 TARGET_PRODUCT_PROP += $(DEVICE_PATH)/properties/product.prop
 TARGET_SYSTEM_PROP += $(DEVICE_PATH)/properties/system.prop
 TARGET_SYSTEM_EXT_PROP += $(DEVICE_PATH)/properties/system_ext.prop
 TARGET_VENDOR_PROP += $(DEVICE_PATH)/properties/vendor.prop
-
-# QCOM
-BOARD_USES_QCOM_HARDWARE := true
 
 # Recovery
 BOARD_EXCLUDE_KERNEL_FROM_RECOVERY_IMAGE := true
@@ -199,15 +205,13 @@ TARGET_USERIMAGES_USE_F2FS := true
 ENABLE_VENDOR_RIL_SERVICE := true
 
 # Security patch level
-BOOT_SECURITY_PATCH := 2026-10-05
+# Stock C5.0-261023-2145 (payload security_patch_level); AVB rollback indexes derive from it
+BOOT_SECURITY_PATCH := 2026-11-01
 VENDOR_SECURITY_PATCH := $(BOOT_SECURITY_PATCH)
 
 # Sepolicy
 include device/qcom/sepolicy_vndr/SEPolicy.mk
-
-SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/private
-SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/public
-BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
+include hardware/nothing/sepolicy/nt-sepolicy.mk
 
 # Verified Boot
 STOCK_SECURITY_PATCH_TIMESTAMP := $(shell date -d 'TZ="GMT" $(VENDOR_SECURITY_PATCH)' +%s)
@@ -230,7 +234,8 @@ BOARD_AVB_RECOVERY_KEY_PATH := $(AVB_CUSTOM_KEY_PATH)
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX := 1
 BOARD_AVB_RECOVERY_ROLLBACK_INDEX_LOCATION := 1
 
-BOARD_AVB_VBMETA_SYSTEM := system system_ext product pvmfw
+# Same layout as stock: init_boot is hashed in vbmeta_system, vendor images in vbmeta_vendor (location 4)
+BOARD_AVB_VBMETA_SYSTEM := init_boot system system_ext product pvmfw
 BOARD_AVB_VBMETA_SYSTEM_ALGORITHM := $(AVB_CUSTOM_ALGORITHM)
 BOARD_AVB_VBMETA_SYSTEM_KEY_PATH := $(AVB_CUSTOM_KEY_PATH)
 BOARD_AVB_VBMETA_SYSTEM_ROLLBACK_INDEX := $(STOCK_SECURITY_PATCH_TIMESTAMP)
@@ -241,17 +246,24 @@ BOARD_AVB_BOOT_KEY_PATH := $(AVB_CUSTOM_KEY_PATH)
 BOARD_AVB_BOOT_ROLLBACK_INDEX := $(STOCK_SECURITY_PATCH_TIMESTAMP)
 BOARD_AVB_BOOT_ROLLBACK_INDEX_LOCATION := 3
 
-BOARD_AVB_INIT_BOOT_ALGORITHM := $(AVB_CUSTOM_ALGORITHM)
-BOARD_AVB_INIT_BOOT_KEY_PATH := $(AVB_CUSTOM_KEY_PATH)
-BOARD_AVB_INIT_BOOT_ROLLBACK_INDEX := $(STOCK_SECURITY_PATCH_TIMESTAMP)
-BOARD_AVB_INIT_BOOT_ROLLBACK_INDEX_LOCATION := 4
+BOARD_AVB_VBMETA_VENDOR := odm system_dlkm vendor vendor_dlkm
+BOARD_AVB_VBMETA_VENDOR_ALGORITHM := $(AVB_CUSTOM_ALGORITHM)
+BOARD_AVB_VBMETA_VENDOR_KEY_PATH := $(AVB_CUSTOM_KEY_PATH)
+BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX := $(STOCK_SECURITY_PATCH_TIMESTAMP)
+BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION := 4
 
 # VINTF
 DEVICE_MATRIX_FILE := hardware/qcom-caf/common/compatibility_matrix.xml
 
+ODM_MANIFEST_SKUS := EEA JPN ROW TUR
+ODM_MANIFEST_EEA_FILES := $(DEVICE_PATH)/vintf/manifest_EEA.xml
+ODM_MANIFEST_JPN_FILES := $(DEVICE_PATH)/vintf/manifest_JPN.xml
+ODM_MANIFEST_ROW_FILES := $(DEVICE_PATH)/vintf/manifest_ROW.xml
+ODM_MANIFEST_TUR_FILES := $(DEVICE_PATH)/vintf/manifest_TUR.xml
+
 DEVICE_MANIFEST_SKUS := volcano
 DEVICE_MANIFEST_VOLCANO_FILES := \
-    $(DEVICE_PATH)/vintf/manifest.xml \
+    $(DEVICE_PATH)/vintf/manifest.xml
 
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += \
     $(DEVICE_PATH)/vintf/framework_compatibility_matrix.xml \

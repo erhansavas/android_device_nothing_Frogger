@@ -13,8 +13,13 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/emulated_storage.mk)
 # Enforce generic ramdisk allow list
 $(call inherit-product, $(SRC_TARGET_DIR)/product/generic_ramdisk.mk)
 
-# Enable virtual AB without compression
+# Enable virtual AB with compression, as stock does
 $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/launch_with_vendor_ramdisk.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota/vabc_features.mk)
+PRODUCT_VIRTUAL_AB_COMPRESSION_METHOD := lz4
+PRODUCT_VENDOR_PROPERTIES += \
+    ro.virtual_ab.compression.threads=true \
+    ro.virtual_ab.merge_delay_seconds=300
 
 # Setup dalvik vm configs
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
@@ -42,9 +47,13 @@ PRODUCT_PACKAGES += \
     checkpoint_gc \
     otapreopt_script
 
-# API
-PRODUCT_SHIPPING_API_LEVEL := 35
+# API (stock ro.product.first_api_level / ro.board.first_api_level)
+PRODUCT_SHIPPING_API_LEVEL := 36
 BOARD_SHIPPING_API_LEVEL := 34
+
+# The stock vendor (board API 34) is built for 4 KiB pages: 628 of its libraries have
+# 4 KiB LOAD alignment, so the 16 KiB prebuilt check that API 36 enables cannot apply.
+PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE := false
 
 # Attestation
 PRODUCT_COPY_FILES += \
@@ -85,15 +94,12 @@ PRODUCT_PACKAGES += \
     libqcomvoiceprocessing \
     libvolumelistener
 
-PRODUCT_PACKAGES += \
-    firmware_aw_cali.bin_symlink
-
 CONFIG_SKU_OUT_DIR := $(TARGET_COPY_OUT_VENDOR)/etc/audio/sku_volcano
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/audio_policy_configuration.xml:$(CONFIG_SKU_OUT_DIR)/audio_policy_configuration.xml \
-    $(LOCAL_PATH)/audio/mixer_paths_volcano_mtp.xml:$(CONFIG_SKU_OUT_DIR)/mixer_paths_volcano_mtp.xml \
-    $(LOCAL_PATH)/audio/resourcemanager_volcano_mtp.xml:$(CONFIG_SKU_OUT_DIR)/resourcemanager_volcano_mtp.xml \
+    $(LOCAL_PATH)/audio/mixer_paths_volcano_qrd.xml:$(CONFIG_SKU_OUT_DIR)/mixer_paths_volcano_qrd.xml \
+    $(LOCAL_PATH)/audio/resourcemanager_volcano_qrd.xml:$(CONFIG_SKU_OUT_DIR)/resourcemanager_volcano_qrd.xml \
     $(LOCAL_PATH)/audio/usecaseKvManager.xml:$(TARGET_COPY_OUT_VENDOR)/etc/usecaseKvManager.xml
 
 AUDIO_HAL_DIR := hardware/qcom-caf/sm8650/audio/primary-hal
@@ -101,7 +107,7 @@ CONFIG_HAL_SRC_DIR := $(AUDIO_HAL_DIR)/configs/volcano
 CONFIG_PAL_SRC_DIR := $(AUDIO_HAL_DIR)/../pal/configs/volcano
 
 PRODUCT_COPY_FILES += \
-    $(CONFIG_HAL_SRC_DIR)/audio_effects.xml:$(CONFIG_SKU_OUT_DIR)/audio_effects.xml \
+    $(LOCAL_PATH)/audio/audio_effects.xml:$(CONFIG_SKU_OUT_DIR)/audio_effects.xml \
     $(CONFIG_HAL_SRC_DIR)/microphone_characteristics.xml:$(TARGET_COPY_OUT_VENDOR)/etc/microphone_characteristics.xml \
     $(CONFIG_PAL_SRC_DIR)/card-defs.xml:$(TARGET_COPY_OUT_VENDOR)/etc/card-defs.xml \
     $(AUDIO_HAL_DIR)/configs/common/media_codecs_vendor_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_vendor_audio.xml \
@@ -139,6 +145,7 @@ PRODUCT_PACKAGES += \
 $(call soong_config_set_bool,camera,override_format_from_reserved,true)
 
 PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.camera.concurrent.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.concurrent.xml \
     frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.flash-autofocus.xml \
     frameworks/native/data/etc/android.hardware.camera.front.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.front.xml \
     frameworks/native/data/etc/android.hardware.camera.full.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.full.xml \
@@ -165,19 +172,23 @@ PRODUCT_PACKAGES += \
 # e-SIM
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/euicc/default-permissions_com.google.android.euicc.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/default-permissions/default-permissions_com.google.android.euicc.xml \
-    $(LOCAL_PATH)/euicc/privapp_allowlist_com.google.android.euicc.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/privapp_allowlist_com.google.android.euicc.xml \
+    $(LOCAL_PATH)/euicc/privapp_allowlist_com.google.android.euicc.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/privapp_allowlist_com.google.android.euicc.xml
 
 PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.hardware.telephony.euicc.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/android.hardware.telephony.euicc.xml \
+    frameworks/native/data/etc/android.hardware.telephony.euicc.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_JPN/android.hardware.telephony.euicc.xml
+
+# FeliCa
+PRODUCT_PACKAGES += \
+    NothingFelicaDisabler
 
 # Fingerprint
 PRODUCT_PACKAGES += \
-    android.hardware.biometrics.fingerprint-service.lineage
+    android.hardware.biometrics.fingerprint-service.nothing
+
+$(call soong_config_set,NOTHING_BIOMETRICS_FINGERPRINT,IMPL_VER,V2)
 
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.fingerprint.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.fingerprint.xml
-
-$(call soong_config_set,lineage_hardware_biometrics,fpdata_path,/data/vendor_de/{}/fpdata)
 
 # Fstab
 PRODUCT_COPY_FILES += \
@@ -189,30 +200,6 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/etc/fstab.default:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.default
 
 # GPS
-PRODUCT_PACKAGES += \
-    android.hardware.gnss-aidl-impl-qti \
-    android.hardware.gnss-aidl-service-qti
-
-PRODUCT_PACKAGES += \
-    libbatching \
-    libgeofencing \
-    libgnss
-
-PRODUCT_PACKAGES += \
-    batching.conf \
-    gnss_antenna_info.conf \
-    gps.conf \
-    izat.conf
-
-PRODUCT_PACKAGES += \
-    gnss@2.0-base.policy \
-    gnss@2.0-edgnss-daemon.policy \
-    gnss@2.0-qsap-location.policy \
-    gnss@2.0-xtra-daemon.policy
-
-$(call soong_config_set, qtilocation, feature_locauto, false)
-$(call soong_config_set, qtilocation, feature_nhz, false)
-
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.location.gps.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.location.gps.xml
 
@@ -231,6 +218,12 @@ PRODUCT_PACKAGES += \
     android.hardware.health-service.qti \
     android.hardware.health-service.qti_recovery
 
+# Lineage Health
+$(call soong_config_set,lineage_health,charging_control_charging_path,/proc/charger/usb_charger_en)
+
+PRODUCT_PACKAGES += \
+    vendor.lineage.health-service.default
+
 # HIDL
 # TODO(b/330696629) remove this once device can drop HIDL.
 PRODUCT_PACKAGES += \
@@ -243,16 +236,9 @@ PRODUCT_PACKAGES += \
     IPACM_cfg.xml \
     IPACM_Filter_cfg.xml
 
-# Lineage Health
-PRODUCT_PACKAGES += \
-    vendor.lineage.health-service.default
-
-$(call soong_config_set,lineage_health,charging_control_charging_path,/sys/class/qcom-battery/charge_disable)
-$(call soong_config_set,lineage_health,charging_control_charging_enabled,0)
-$(call soong_config_set,lineage_health,charging_control_charging_disabled,1)
-$(call soong_config_set,lineage_health,fast_charge_node,/sys/class/qcom-battery/chgmod_fcc)
-$(call soong_config_set,lineage_health,fast_charge_value_none,1000000)
-$(call soong_config_set,lineage_health,fast_charge_value_fast_charge,5800000)
+# Keylayout
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/configs/gpio-keys.kl:$(TARGET_COPY_OUT_VENDOR)/usr/keylayout/gpio-keys.kl
 
 # Media
 PRODUCT_COPY_FILES += \
@@ -266,29 +252,32 @@ PRODUCT_COPY_FILES += \
 PRODUCT_PACKAGES += \
     vendor.qti.hardware.memtrack-service
 
-# Moments switch
-PRODUCT_PACKAGES += \
-    AlertSliderResFrogger \
-    KeyHandler \
-    LineageResAlertSlider
-
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/keylayout/fpv6_switch_key.kl:system/usr/keylayout/fpv6_switch_key.kl
-
 # Network
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.ipsec_tunnel_migration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.ipsec_tunnel_migration.xml \
     frameworks/native/data/etc/android.software.ipsec_tunnels.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.ipsec_tunnels.xml
 
 # NFC
-PRODUCT_PACKAGES += \
-    android.hardware.nfc-service.sec
-
+# The NFC features are per SKU on odm, as on stock
 PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.hardware.nfc.hce.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.hce.xml \
-    frameworks/native/data/etc/android.hardware.nfc.hcef.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.hcef.xml \
-    frameworks/native/data/etc/android.hardware.nfc.uicc.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.uicc.xml \
-    frameworks/native/data/etc/android.hardware.nfc.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.xml \
+    frameworks/native/data/etc/android.hardware.nfc.hce.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_EEA/android.hardware.nfc.hce.xml \
+    frameworks/native/data/etc/android.hardware.nfc.hcef.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_EEA/android.hardware.nfc.hcef.xml \
+    frameworks/native/data/etc/android.hardware.nfc.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_EEA/android.hardware.nfc.xml \
+    frameworks/native/data/etc/com.nxp.mifare.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_EEA/com.nxp.mifare.xml \
+    frameworks/native/data/etc/android.hardware.nfc.ese.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_JPN/android.hardware.nfc.ese.xml \
+    frameworks/native/data/etc/android.hardware.nfc.hce.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_JPN/android.hardware.nfc.hce.xml \
+    frameworks/native/data/etc/android.hardware.nfc.hcef.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_JPN/android.hardware.nfc.hcef.xml \
+    frameworks/native/data/etc/android.hardware.nfc.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_JPN/android.hardware.nfc.xml \
+    frameworks/native/data/etc/com.nxp.mifare.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_JPN/com.nxp.mifare.xml \
+    frameworks/native/data/etc/android.hardware.nfc.hce.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_ROW/android.hardware.nfc.hce.xml \
+    frameworks/native/data/etc/android.hardware.nfc.hcef.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_ROW/android.hardware.nfc.hcef.xml \
+    frameworks/native/data/etc/android.hardware.nfc.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_ROW/android.hardware.nfc.xml \
+    frameworks/native/data/etc/com.nxp.mifare.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_ROW/com.nxp.mifare.xml \
+    frameworks/native/data/etc/android.hardware.nfc.hce.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_TUR/android.hardware.nfc.hce.xml \
+    frameworks/native/data/etc/android.hardware.nfc.hcef.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_TUR/android.hardware.nfc.hcef.xml \
+    frameworks/native/data/etc/android.hardware.nfc.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_TUR/android.hardware.nfc.xml \
+    frameworks/native/data/etc/com.nxp.mifare.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_TUR/com.nxp.mifare.xml \
+    frameworks/native/data/etc/android.hardware.se.omapi.ese.xml:$(TARGET_COPY_OUT_ODM)/etc/permissions/sku_JPN/android.hardware.se.omapi.ese.xml \
     frameworks/native/data/etc/android.hardware.se.omapi.uicc.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.se.omapi.uicc.xml
 
 # Overlays
@@ -306,9 +295,6 @@ PRODUCT_PACKAGES += \
     WifiResTarget \
 
 PRODUCT_PACKAGES += \
-    ApertureResFrogger
-
-PRODUCT_PACKAGES += \
     NcmTetheringOverlay
 
 # Partitions
@@ -322,7 +308,6 @@ PRODUCT_BUILD_PVMFW_IMAGE := true
 
 # Perf
 PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/task_profiles.json:$(TARGET_COPY_OUT_VENDOR)/etc/task_profiles.json \
     $(LOCAL_PATH)/perf/perfconfigstore.xml:$(TARGET_COPY_OUT_VENDOR)/etc/perf/perfconfigstore.xml
 
 # Power
@@ -331,8 +316,6 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_COPY_FILES += \
     vendor/qcom/opensource/power/config/volcano/powerhint.xml:$(TARGET_COPY_OUT_VENDOR)/etc/powerhint.xml
-
-$(call soong_config_set,qtipower,tap_to_wake_node,/sys/bus/spi/devices/spi0.0/gesture_wakeup)
 
 # QSPA
 PRODUCT_PACKAGES += \
@@ -350,7 +333,6 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.sensor.accelerometer.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/sku_volcano/android.hardware.sensor.accelerometer.xml \
-    frameworks/native/data/etc/android.hardware.sensor.barometer.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/sku_volcano/android.hardware.sensor.barometer.xml \
     frameworks/native/data/etc/android.hardware.sensor.compass.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/sku_volcano/android.hardware.sensor.compass.xml \
     frameworks/native/data/etc/android.hardware.sensor.dynamic.head_tracker.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/sku_volcano/android.hardware.sensor.dynamic.head_tracker.xml \
     frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/sku_volcano/android.hardware.sensor.gyroscope.xml \
@@ -360,13 +342,17 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.sensor.stepdetector.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/sku_volcano/android.hardware.sensor.stepdetector.xml
 
 # Screen density
-TARGET_SCREEN_DENSITY := 440
+TARGET_SCREEN_DENSITY := 480
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
-    $(LOCAL_PATH)
+    $(LOCAL_PATH) \
+    hardware/nothing
 
 # Telephony
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.telephony.cdma.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.cdma.xml
+
 PRODUCT_PACKAGES += \
     extphonelib \
     extphonelib-product \
@@ -433,6 +419,7 @@ PRODUCT_COPY_FILES += \
 
 # Vendor init
 PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/rootdir/etc/init.frogger.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.frogger.rc \
     $(LOCAL_PATH)/rootdir/etc/init.qcom.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.qcom.rc \
     $(LOCAL_PATH)/rootdir/etc/init.target.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.target.rc
 
@@ -450,12 +437,12 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.verified_boot.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.verified_boot.xml
 
-# Vibrator
-PRODUCT_PACKAGES += \
-    vendor.qti.hardware.vibrator.service
-
 PRODUCT_COPY_FILES += \
     vendor/qcom/opensource/vibrator/excluded-input-devices.xml:$(TARGET_COPY_OUT_VENDOR)/etc/excluded-input-devices.xml
+
+# Vibrator
+PRODUCT_PACKAGES += \
+    android.hardware.vibrator.service.nothing-rt_ics
 
 # WiFi
 PRODUCT_PACKAGES += \
@@ -476,14 +463,12 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.wifi.aware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.wifi.aware.xml \
     frameworks/native/data/etc/android.hardware.wifi.direct.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.wifi.direct.xml \
     frameworks/native/data/etc/android.hardware.wifi.passpoint.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.wifi.passpoint.xml \
-    frameworks/native/data/etc/android.hardware.wifi.rtt.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.wifi.rtt.xml \
     frameworks/native/data/etc/android.hardware.wifi.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.wifi.xml
 
 # WiFi firmware symlinks
 PRODUCT_PACKAGES += \
     firmware_qca6750_WCNSS_qcom_cfg.ini_symlink \
     firmware_qca6750_wlan_mac.bin_symlink \
-    firmware_WCNSS_qcom_cfg.ini_symlink \
     firmware_wlanmdsp.otaupdate_symlink
 
 # Inherit from the proprietary files makefile
