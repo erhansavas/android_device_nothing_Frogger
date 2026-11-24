@@ -1,1 +1,0 @@
-require board=Frogger|Frogger_US
