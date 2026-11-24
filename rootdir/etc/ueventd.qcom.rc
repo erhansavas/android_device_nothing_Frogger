@@ -227,6 +227,8 @@ subsystem mem_buf_vm
 /dev/fastrpc-adsp-secure  0644   system     system
 /dev/fastrpc-cdsp-secure  0644   system     system
 /dev/fastrpc-sdsp-secure  0644   system     system
+/dev/fastrpc-nsp*         0644   system     system
+/dev/fastrpc-lpass*       0644   system     system
 /dev/system_health_monitor 0644  radio      system
 /dev/mdss_rotator         0664   system     system
 /dev/spec_sync            0660   system     system
@@ -403,6 +405,10 @@ subsystem mem_buf_vm
 # eSE permissions
 /dev/st54spi_gpio         0660   system     system
 /dev/stsafe320_gpio       0660   system     system
+# ifdef NT_EDIT
+# Nothing add eSE permissions /ARCA-22
+/dev/st54spi              0660   secure_element     secure_element
+# endif NT_EDIT
 
 # UIO devices
 /dev/uio0                 0660   system     system
@@ -445,6 +451,14 @@ subsystem mem_buf_vm
 /dev/block/platform/soc/4744000.sdhci/by-name/frp       0600   system     system
 /dev/block/platform/soc/4804000.ufshc/by-name/frp       0600   system     system
 /dev/block/platform/soc/b24000.sdhci/by-name/frp        0600   system     system
+
+/dev/block/platform/soc/1d84000.ufshc/by-name/binfo   0660    system     system
+/dev/block/platform/soc/7c4000.sdhci/by-name/binfo    0660    system     system
+
+#Add for nt_reserve1
+/dev/block/platform/soc/1d84000.ufshc/by-name/nt_reserve1     0660   system     system
+/dev/block/platform/soc/7c4000.sdhci/by-name/nt_reserve1      0660   system     system
+
 
 # This is temporary while using SD card for initial bring-up
 /dev/block/platform/soc/8804000.sdhci/by-name/frp       0600   system     system
@@ -621,9 +635,24 @@ subsystem mem_buf_vm
 #power_state device node
 /dev/power_state           0660   system      system
 
-# Battery
-/sys/class/qcom-battery                                 charge_disable                  0660    system  system
-/sys/class/qcom-battery                                 chgmod_fcc                      0660    system  system
+# Fastrpc domain  sysfs attributes
+/sys/kernel/fastrpc/nsp* name               0444   root     system
+/sys/kernel/fastrpc/nsp* domain_id          0444   root     system
+/sys/kernel/fastrpc/nsp* instance_id        0444   root     system
+/sys/kernel/fastrpc/nsp* status             0444   root     system
+/sys/kernel/fastrpc/nsp* type               0444   root     system
+/sys/kernel/fastrpc/nsp* legacy_name        0444   root     system
+/sys/kernel/fastrpc/nsp* legacy_id          0444   root     system
 
-# Hall status
-/sys/devices/virtual/hall_switch/soc:hall_1/hall_status   0660    system  system
+/sys/kernel/fastrpc/lpass* name               0444   root     system
+/sys/kernel/fastrpc/lpass* domain_id          0444   root     system
+/sys/kernel/fastrpc/lpass* instance_id        0444   root     system
+/sys/kernel/fastrpc/lpass* status             0444   root     system
+/sys/kernel/fastrpc/lpass* type               0444   root     system
+/sys/kernel/fastrpc/lpass* legacy_name        0444   root     system
+/sys/kernel/fastrpc/lpass* legacy_id          0444   root     system
+
+# QPT
+/sys/devices/virtual/powercap/qpt/qpt\:*/*    name                  0440    root system
+/sys/devices/virtual/powercap/qpt/qpt\:*/*    energy_uj             0440    root system
+/sys/devices/virtual/powercap/qpt/qpt\:*/*    power_uw              0440    root system

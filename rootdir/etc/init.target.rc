@@ -61,6 +61,7 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import /vendor/etc/init/hw/init.qti.kernel.rc
+import /vendor/etc/init/hw/init.frogger.rc
 
 on early-init
     write /proc/sys/kernel/printk_devkmsg ratelimited
@@ -73,21 +74,6 @@ on init
     chmod 0660 /sys/devices/platform/soc/1d84000.ufshc/auto_hibern8
     start logd
 
-    chmod 0660 /sys/emkit/info/acceleration
-    chmod 0660 /sys/emkit/info/gyroscope
-    chmod 0660 /sys/emkit/info/hall
-    chmod 0660 /sys/emkit/info/light
-    chmod 0660 /sys/emkit/info/magnetic
-    chmod 0660 /sys/emkit/info/pressure
-    chmod 0660 /sys/emkit/info/proximity
-    chown system system /sys/emkit/info/acceleration
-    chown system system /sys/emkit/info/gyroscope
-    chown system system /sys/emkit/info/hall
-    chown system system /sys/emkit/info/light
-    chown system system /sys/emkit/info/magnetic
-    chown system system /sys/emkit/info/pressure
-    chown system system /sys/emkit/info/proximity
-
 on early-fs
     start vold
 
@@ -99,10 +85,6 @@ on fs
     restorecon_recursive /mnt/vendor/persist
     mkdir /mnt/vendor/persist/secnvm 0770 system system
     mkdir /mnt/vendor/persist/data 0700 system system
-    mkdir /mnt/vendor/persist/factory 0771 root system
-    mkdir /mnt/vendor/persist/factory/audio 0771 root system
-    chown root system /mnt/vendor/persist/factory/audio/aw_cali.bin
-    chmod 0664 /mnt/vendor/persist/factory/audio/aw_cali.bin
 
 on post-fs
     #Execute virtualization manager
@@ -114,31 +96,10 @@ on late-fs
     #exec_start wait_for_keymaster
     mount_all --late
 
-    mkdir /data/vendor/focaltech 0760 system system
-    restorecon /data/vendor/focaltech
-
 on post-fs-data
     mkdir /vendor/data/tombstones 0771 system system
     # Enable WLAN cold boot calibration
     write /sys/kernel/cnss/fs_ready 1
-
-    chmod 0660 /sys/class/deviceinfo/device_info/CamOTPB
-    chmod 0660 /sys/class/deviceinfo/device_info/CamOTPB2
-    chmod 0660 /sys/class/deviceinfo/device_info/CamOTPF
-    mkdir /mnt/vendor/persist/cam_cali 0770 system system
-    restorecon_recursive /mnt/vendor/persist/cam_cali
-    mkdir /mnt/vendor/persist/camera 0770 system camera
-    chown system camera /dev/stmvl53l1_ranging
-    chmod 0660 /dev/stmvl53l1_ranging
-    chmod 0660 /sys/class/debug_ois/afdrift
-    chmod 0660 /sys/class/debug_ois/oisops
-    chmod 0660 /sys/class/debug_ois/oisreg
-
-    wait /sys/devices/platform/soc/ac0000.qcom,qupv3_0_geni_se/a80000.spi/spi_master/spi0/spi0.0/gesture_wakeup 20
-    chown system system /sys/devices/platform/soc/ac0000.qcom,qupv3_0_geni_se/a80000.spi/spi_master/spi0/spi0.0/gesture_wakeup
-    chmod 0660 /sys/devices/platform/soc/ac0000.qcom,qupv3_0_geni_se/a80000.spi/spi_master/spi0/spi0.0/gesture_wakeup
-
-    mkdir /data/vendor/camera_dump 0770 system system
 
 on early-boot
     verity_update_state
@@ -153,42 +114,58 @@ on boot
     chown cameraserver cameraserver /dev/cpuset/camera-daemon
     chown cameraserver cameraserver /dev/cpuset/camera-daemon/tasks
     chmod 0660 /dev/cpuset/camera-daemon/tasks
-
-    mkdir /dev/cpuset/surfaceflinger
-    write /dev/cpuset/surfaceflinger/cpus 2-5
-    write /dev/cpuset/surfaceflinger/mems 0
-    chown system system /dev/cpuset/surfaceflinger
-    chown system system /dev/cpuset/surfaceflinger/tasks
-    chown system system /dev/cpuset/surfaceflinger/cgroup.procs
-    # set surfaceflinger to 0775 so SurfaceFlinger can touch it
-    chmod 0775 /dev/cpuset/surfaceflinger
-    chmod 0664 /dev/cpuset/surfaceflinger/tasks
-    chmod 0664 /dev/cpuset/surfaceflinger/cgroup.procs
-
     chown system /sys/devices/platform/soc/990000.i2c/i2c-0/0-0038/trusted_touch_enable
     chmod 0660 /sys/devices/platform/soc/990000.i2c/i2c-0/0-0038/trusted_touch_enable
     chown system /sys/devices/platform/soc/990000.spi/spi_master/spi0/spi0.0/trusted_touch_enable
     chmod 0660 /sys/devices/platform/soc/990000.spi/spi_master/spi0/spi0.0/trusted_touch_enable
     chown system /sys/devices/system/cpu/hyp_core_ctl/enable
     chown system /sys/devices/system/cpu/hyp_core_ctl/hcc_min_freq
+    #ifdef NT_EDIT
+    #Nothing/Support force key warm_reset feature/ARCA-270
+    chmod 0660 /sys/devices/platform/soc/c42d000.qcom,spmi/driver/c42d000.qcom,spmi/spmi-0/0-00/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300/force_key_warm_reset
+    chown system system /sys/devices/platform/soc/c42d000.qcom,spmi/driver/c42d000.qcom,spmi/spmi-0/0-00/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300/force_key_warm_reset
+    #endif /* NT_EDIT */
 
-    chown system system /dev/focaltech_fp
-    chmod 0660 /dev/focaltech_fp
+    chmod 770 /proc/reserve_pool
+    chown cameraserver cameraserver /proc/reserve_pool
+    chmod 770 /proc/reserve_pool/reserve_pool
+    chown cameraserver cameraserver /proc/reserve_pool/reserve_pool
+    chmod 770 /proc/reserve_pool/inpool_pid
+    chown cameraserver cameraserver /proc/reserve_pool/inpool_pid
+    chmod 770 /proc/reserve_pool/inpool_pid_0
+    chown cameraserver cameraserver /proc/reserve_pool/inpool_pid_0
+    chmod 770 /proc/reserve_pool/inpool_pid_1
+    chown cameraserver cameraserver /proc/reserve_pool/inpool_pid_1
+    chmod 770 /proc/reserve_pool/inpool_pid_2
+    chown cameraserver cameraserver /proc/reserve_pool/inpool_pid_2
+    chmod 770 /proc/reserve_pool/inpool_pid_3
+    chown cameraserver cameraserver /proc/reserve_pool/inpool_pid_3
+    chmod 770 /proc/reserve_pool/reserve_pool_pages
+    chown cameraserver cameraserver /proc/reserve_pool/reserve_pool_pages
+    chmod 770 /proc/reserve_pool/reserve_pool_stat
+    chown cameraserver cameraserver /proc/reserve_pool/reserve_pool_stat
+    chmod 770 /proc/reserve_pool/reserve_pool_cpu_set
+    chown cameraserver cameraserver /proc/reserve_pool/reserve_pool_cpu_set
 
-    # MMITest
-    chown system system /sys/class/qcom-battery/typec_cc_orientation
-    chmod 0666 /sys/class/qcom-battery/typec_cc_orientation
-    chown system system /sys/class/udc/a600000.dwc3/current_speed
-    chmod 0666 /sys/class/udc/a600000.dwc3/current_speed
-    chmod 0666 /mnt/vendor/persist/sensors/registry/registry/volcano_spl07_0.json.spl07_0_platform.pressure.fac_cal.bias
-    chown system /sys/class/leds/led:torch_0/brightness
-    chmod 0660 /sys/class/leds/led:torch_0/brightness
-    chown system system /sys/bus/spi/devices/spi0.0/fw_version
-    chmod 0660 /sys/bus/spi/devices/spi0.0/fw_version
-    chown system system /sys/module/qcom_dload_mode/parameters/download_mode
-    chmod 0660 /sys/module/qcom_dload_mode/parameters/download_mode
-    chown system system /sys/devices/virtual/hall_switch/soc:hall_1/hall_status
-    chmod 0660 /sys/devices/virtual/hall_switch/soc:hall_1/hall_status
+    chmod 550 /proc/nt_meminfo/
+    chown system system /proc/nt_meminfo/
+    chmod 550 /proc/nt_meminfo/show_all_dma
+    chown system system /proc/nt_meminfo/show_all_dma
+    chmod 550 /proc/nt_meminfo/show_all_tasks
+    chown system system /proc/nt_meminfo/show_all_tasks
+    chmod 550 /proc/nt_meminfo/show_all_task_dma
+    chown system system /proc/nt_meminfo/show_all_task_dma
+    chmod 550 /proc/nt_disk/
+    chown system system /proc/nt_disk/
+    chmod 550 /proc/nt_disk/get_data_usage
+    chown system system /proc/nt_disk/get_data_usage
+    chmod 660 /sys/devices/platform/soc/c42d000.qcom,spmi/driver/c42d000.qcom,spmi/spmi-0/0-00/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300/force_key_warm_reset
+    chown system system /sys/devices/platform/soc/c42d000.qcom,spmi/driver/c42d000.qcom,spmi/spmi-0/0-00/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300/force_key_warm_reset
+
+on property:persist.sys.walt.panic_on_bug=0
+    write /proc/sys/walt/panic_on_walt_bug 1162141208
+on property:persist.sys.walt.panic_on_bug=1
+    write /proc/sys/walt/panic_on_walt_bug 1162141211
 
 on property:vendor.display.lcd_density=560
    setprop dalvik.vm.heapgrowthlimit 256m
@@ -239,15 +216,6 @@ on property:sys.shutdown.requested=*
     write /sys/kernel/qcom_rproc/shutdown_in_progress 1
     stop vendor.per_proxy
 
-on property:vold.decrypt=trigger_restart_framework
-   start vendor.cnss_diag
-
-service vendor.cnss_diag /system/vendor/bin/cnss_diag -q -f -t HELIUM
-   class main
-   user system
-   group system wifi inet sdcard_rw media_rw diag
-   oneshot
-
 on early-boot && property:persist.vendor.pcie.boot_option=*
     write /sys/bus/platform/devices/1c00000.qcom,pcie/debug/boot_option ${persist.vendor.pcie.boot_option}
     write /sys/bus/platform/devices/1c08000.qcom,pcie/debug/boot_option ${persist.vendor.pcie.boot_option}
@@ -264,31 +232,16 @@ service fan_control_turn_off /vendor/bin/fan_service 0
     disabled
     oneshot
 
-service set_wifi_mac /vendor/bin/sh /vendor/bin/setwlanmac.sh
-    class late_start
-    user root
-    group root
-    oneshot
+#ifdef NT_EDIT
+#Nothing/Support force key warm_reset feature/ARCA-270
+on property:persist.vendor.stability.force_key_warm_reset=1
+    write /sys/devices/platform/soc/c42d000.qcom,spmi/driver/c42d000.qcom,spmi/spmi-0/0-00/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300/force_key_warm_reset 1
+on property:persist.vendor.stability.force_key_warm_reset=0
+    write /sys/devices/platform/soc/c42d000.qcom,spmi/driver/c42d000.qcom,spmi/spmi-0/0-00/c42d000.qcom,spmi:qcom,pmk8550@0:pon_hlos@1300/force_key_warm_reset 0
+#endif /* NT_EDIT */
 
-on property:vendor.audio.ssr.trigger=1
-    write /sys/kernel/boot_adsp/ssr 1
-
-on boot
-    chown media audio /sys/kernel/snd_card/card_state
-
-on post-fs-data
-    # Create directory used by audio subsystem
-    mkdir /data/vendor/audio 0770 audio audio
-    mkdir /data/vendor/audio_dsp 0770 media media
-    mkdir /data/vendor/audio/audio_feature_stats 0770 audio audio
-    mkdir /data/vendor/audio/memlog 0770 audio audio
-
-    # Create directory for audio delta files
-    mkdir /data/vendor/audio/acdbdata 0770 media audio
-    mkdir /data/vendor/audio/acdbdata/delta 0770 media audio
-
-on property:sys.boot_completed=1
-    #WDSP FW boot sysfs node used by STHAL
-    chown media audio /sys/kernel/wdsp0/boot
-    chown media audio /sys/kernel/wcd_cpe0/fw_name
-    chown media audio /sys/kernel/aud_dev/state
+#ifdef NT_EDIT
+#Nothing/system_server start notic
+on property:sys.system_server.start_count=1
+    write /sys/devices/virtual/NT/NT_reserve_kernel_log/boot_stage_systemserver 1
+#endif /* NT_EDIT */
