@@ -4,6 +4,6 @@
 //
 
 runtime_resource_overlay {
-    name: "ApertureResFP6",
+    name: "ApertureResFrogger",
     device_specific: true,
 }

@@ -18,7 +18,7 @@ from extract_utils.main import (
 )
 
 namespace_imports = [
-    'device/fairphone/FP6',
+    'device/nothing/Frogger',
     'hardware/qcom-caf/sm8650',
     'hardware/qcom-caf/wlan',
     'vendor/qcom/opensource/commonsys/display',
@@ -82,7 +82,7 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/lib64/camera/com.qti.sensor.camano_imx766.so',
         'vendor/lib64/camera/com.qti.sensor.camano_ov64b40.so',
         'vendor/lib64/camera/com.qti.sensor.camano_s5k3m5.so',
-        'vendor/lib64/camera/com.qti.sensor.fp6_imx896.so',
+        'vendor/lib64/camera/com.qti.sensor.frogger_imx896.so',
         'vendor/lib64/camera/com.qti.sensor.imx362.so',
         'vendor/lib64/camera/com.qti.sensor.imx363.so',
         'vendor/lib64/camera/com.qti.sensor.imx376.so',
@@ -236,8 +236,8 @@ blob_fixups: blob_fixups_user_type = {
 
 
 module = ExtractUtilsModule(
-    'FP6',
-    'fairphone',
+    'Frogger',
+    'nothing',
     blob_fixups=blob_fixups,
     lib_fixups=lib_fixups,
     namespace_imports=namespace_imports,
