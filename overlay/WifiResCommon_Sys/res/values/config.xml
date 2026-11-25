@@ -4,6 +4,14 @@
      SPDX-License-Identifier: Apache-2.0
 -->
 <resources>
+    <!-- The default values chosen here establish four non-overlapping categories:
+             saved, unmetered
+             unsaved, unmetered
+             saved, metered
+             unsaved, metered
+         These values can be reduced to allow overlapping between categories. -->
+    <integer name="config_wifiFrameworkUnmeteredNetworkBonus">0</integer>
+
     <!-- Integer indicating maximum hardware supported client number of soft ap -->
     <integer name="config_wifiHardwareSoftapMaxClientCount">32</integer>
 
@@ -35,6 +43,10 @@
 
     <!-- Indicates that dynamic country code update in STA mode is supported on this device -->
     <bool name="config_wifiStaDynamicCountryCodeUpdateSupported">true</bool>
+
+    <!-- List of constants that indicate the number of consecutive failures per type needed to block a BSSID.
+    A blocked BSSID will not be considered in network selection and firmware roaming.-->
+    <integer name="config_wifiBssidBlocklistMonitorApUnableToHandleNewStaThreshold">3</integer>
 
     <!-- Wifi driver Automatic channel selection (ACS) for softap to include DFS channels -->
     <bool name="config_wifiSoftapAcsIncludeDfs">true</bool>
@@ -77,4 +89,10 @@
     <string-array name="config_wifiCharsetsForSsidTranslation" translatable="false">
         <item>zh,GBK</item>
     </string-array>
+
+    <!-- Boolean indicating whether the framework updates country from scan results when there is
+         no telephony country code. This is applied to all generic cases and might require the
+         regulatory approval (for example, FCC pre-approval is required according to "594280 D01
+         Software Configuration Control v02r01").-->
+    <bool name="config_wifiUpdateCountryCodeFromScanResultGeneric">true</bool>
 </resources>
