@@ -146,6 +146,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     hardware/qcom-caf/sm8650/display/config/snapdragon_color_libs_config.xml:$(TARGET_COPY_OUT_VENDOR)/etc/snapdragon_color_libs_config.xml
 
+# Doze
+PRODUCT_PACKAGES += \
+    NothingDoze
+
 # DRM
 PRODUCT_PACKAGES += \
     android.hardware.drm-service.clearkey
@@ -287,6 +291,9 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     NcmTetheringOverlay
+
+DEVICE_PACKAGE_OVERLAYS += \
+    $(LOCAL_PATH)/overlay-lineage
 
 # Partitions
 PRODUCT_PACKAGES += \
