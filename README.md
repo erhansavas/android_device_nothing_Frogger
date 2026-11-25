@@ -1,9 +1,9 @@
 Copyright (C) The LineageOS Project
 
-Device configuration for Fairphone (Gen. 6)
+Device configuration for Nothing (Gen. 6)
 =========================================
 
-The Fairphone (Gen. 6)  (codenamed _"FP6"_) is a high-end smartphone from Fairphone.
+The Nothing (Gen. 6)  (codenamed _"Frogger"_) is a high-end smartphone from Nothing.
 
 It was globally released on June 25 in 2025.
 
@@ -22,4 +22,4 @@ Front camera | 32MP in-display
 
 ## Device picture
 
-![Fairphone (Gen. 6) in white](https://shop.fairphone.com/web/image/3163372-7ef1496a/1080x1080_0000s_0000s_0009_FP6-WHITE-HERO--2-FINAL_VA "Fairphone (Gen. 6) in white")
+![Nothing (Gen. 6) in white](https://shop.nothing.com/web/image/3163372-7ef1496a/1080x1080_0000s_0000s_0009_Frogger-WHITE-HERO--2-FINAL_VA "Nothing (Gen. 6) in white")

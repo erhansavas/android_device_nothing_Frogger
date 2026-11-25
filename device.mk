@@ -268,7 +268,7 @@ PRODUCT_PACKAGES += \
 
 # Moments switch
 PRODUCT_PACKAGES += \
-    AlertSliderResFP6 \
+    AlertSliderResFrogger \
     KeyHandler \
     LineageResAlertSlider
 
@@ -306,7 +306,7 @@ PRODUCT_PACKAGES += \
     WifiResTarget \
 
 PRODUCT_PACKAGES += \
-    ApertureResFP6
+    ApertureResFrogger
 
 PRODUCT_PACKAGES += \
     NcmTetheringOverlay
@@ -487,4 +487,4 @@ PRODUCT_PACKAGES += \
     firmware_wlanmdsp.otaupdate_symlink
 
 # Inherit from the proprietary files makefile
-$(call inherit-product, vendor/fairphone/FP6/FP6-vendor.mk)
+$(call inherit-product, vendor/nothing/Frogger/Frogger-vendor.mk)

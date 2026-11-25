@@ -40,8 +40,8 @@
         <string-array name="preferred_network_mode_choices" num="0" />
         <string-array name="preferred_network_mode_values" num="0" />
         <int name="default_network_mode" value="26" />
-        <string name="userAgent">FP6-MMS/2.0</string>
-        <string name="uaProfUrl">https://techsupport.fairphone.com/uap/FPS_UAP.xml</string>
+        <string name="userAgent">Frogger-MMS/2.0</string>
+        <string name="uaProfUrl">https://techsupport.nothing.com/uap/FPS_UAP.xml</string>
         <boolean name="enabledMMS" value="true" />
         <boolean name="enableMultipartSMS" value="true" />
         <boolean name="sendMultipartSmsAsSeparateMessages" value="false" />

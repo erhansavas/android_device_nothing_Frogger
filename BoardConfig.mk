@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-DEVICE_PATH := device/fairphone/FP6
+DEVICE_PATH := device/nothing/Frogger
 
 # A/B
 AB_OTA_PARTITIONS += \
@@ -44,7 +44,7 @@ TARGET_USES_QCOM_MM_AUDIO := true
 
 # Board
 TARGET_BOARD_PLATFORM := volcano
-TARGET_BOOTLOADER_BOARD_NAME := FP6
+TARGET_BOOTLOADER_BOARD_NAME := Frogger
 
 # Boot image
 BOARD_RAMDISK_USE_LZ4 := true
@@ -71,7 +71,7 @@ BOARD_USES_QCOM_MERGE_DTBS_SCRIPT := true
 BOARD_KERNEL_BASE        := 0x00000000
 BOARD_KERNEL_PAGESIZE    := 4096
 
-TARGET_KERNEL_SOURCE := kernel/fairphone/sm7635
+TARGET_KERNEL_SOURCE := kernel/nothing/sm7635
 TARGET_KERNEL_CONFIG := \
     gki_defconfig \
     vendor/fps_GKI.config
@@ -104,7 +104,7 @@ BOARD_VENDOR_KERNEL_MODULES_LOAD := $(second_stage_modules) $(vendor_dlkm_module
 SYSTEM_KERNEL_MODULES := $(BOARD_SYSTEM_KERNEL_MODULES_LOAD)
 BOOT_KERNEL_MODULES := $(BOARD_VENDOR_RAMDISK_RECOVERY_KERNEL_MODULES_LOAD)
 
-TARGET_KERNEL_EXT_MODULE_ROOT := kernel/fairphone/sm7635-modules
+TARGET_KERNEL_EXT_MODULE_ROOT := kernel/nothing/sm7635-modules
 # Modules which provide necessary symbols for other modules must be added first
 TARGET_KERNEL_EXT_MODULES := \
     qcom/opensource/datarmnet-ext/mem \
@@ -277,4 +277,4 @@ WIFI_HIDL_UNIFIED_SUPPLICANT_SERVICE_RC_ENTRY := true
 WPA_SUPPLICANT_VERSION := VER_0_8_X
 
 # Inherit the proprietary files BoardConfig
-include vendor/fairphone/FP6/BoardConfigVendor.mk
+include vendor/nothing/Frogger/BoardConfigVendor.mk
