@@ -112,3 +112,6 @@ service weaver_hal_service /vendor/bin/hw/android.hardware.weaver-service.thales
     user vendor_thales_weaver
     group vendor_thales_weaver
     disabled
+
+on property:sys.boot_completed=1
+    swapon_all /vendor/etc/fstab.zram
