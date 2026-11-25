@@ -1,0 +1,114 @@
+#
+# SPDX-FileCopyrightText: The LineageOS Project
+# SPDX-License-Identifier: Apache-2.0
+#
+
+on init
+    setprop ro.boot.product.hardware.sku ${ro.boot.hardware.sku}
+
+on early-init && property:ro.boot.hardware.sku=JPN
+    setprop ro.strongbox.manufacturer "Thales"
+    setprop ro.strongbox.model "ST54L-CeSE-1.2"
+
+on late-fs && property:ro.boot.hardware.sku=JPN
+    start vendor.keymint-strongbox
+
+on boot && property:ro.boot.hardware.sku=JPN
+    start weaver_hal_service
+
+on fs
+    # Audio calibration
+    mkdir /mnt/vendor/persist/audio 0775 audio audio
+
+on early-boot
+    # Glyph
+    chown system system /dev/led_strips
+    chmod 0660 /dev/led_strips
+    chown system system /sys/devices/platform/soc/8c0000.qcom,qupv3_1_geni_se/880000.i2c/i2c-7/7-003a/leds/aw20036_led/dev_color
+    chmod 0660 /sys/devices/platform/soc/8c0000.qcom,qupv3_1_geni_se/880000.i2c/i2c-7/7-003a/leds/aw20036_led/dev_color
+    chown system system /sys/devices/platform/soc/8c0000.qcom,qupv3_1_geni_se/880000.i2c/i2c-7/7-003a/leds/aw20036_led/operating_mode
+    chmod 0660 /sys/devices/platform/soc/8c0000.qcom,qupv3_1_geni_se/880000.i2c/i2c-7/7-003a/leds/aw20036_led/operating_mode
+    chown system system /sys/devices/platform/soc/8c0000.qcom,qupv3_1_geni_se/880000.i2c/i2c-7/7-003a/leds/aw20036_led/frame_brightness
+    chmod 0660 /sys/devices/platform/soc/8c0000.qcom,qupv3_1_geni_se/880000.i2c/i2c-7/7-003a/leds/aw20036_led/frame_brightness
+
+on boot
+    # Touchscreen
+    chown system system /proc/touchpanel/fod_mode
+    chmod 0660 /proc/touchpanel/fod_mode
+    chown system system /proc/touchpanel/TP_charger_flags
+    chmod 0660 /proc/touchpanel/TP_charger_flags
+    chown system system /proc/touchpanel/gesture_mode
+    chmod 0660 /proc/touchpanel/gesture_mode
+    chown system system /proc/touchpanel/pocket_mode
+    chmod 0660 /proc/touchpanel/pocket_mode
+    chown system system /proc/touchpanel/palm_to_sleep_support
+    chmod 0660 /proc/touchpanel/palm_to_sleep_support
+
+    # Glyph
+    chown system system /sys/class/leds/aw20036_led/hwid
+    chmod 0664 /sys/class/leds/aw20036_led/hwid
+    chown system system /sys/class/leds/aw20036_led/effect
+    chmod 0664 /sys/class/leds/aw20036_led/effect
+    chown system system /sys/class/leds/aw20036_led/all_brightness
+    chmod 0220 /sys/class/leds/aw20036_led/all_brightness
+    chown system system /sys/class/leds/aw20036_led/imax
+    chmod 0664 /sys/class/leds/aw20036_led/imax
+    chown system system /sys/class/leds/aw20036_led/frame_brightness
+    chmod 0220 /sys/class/leds/aw20036_led/frame_brightness
+    chown system system /sys/class/leds/aw20036_led/operating_mode
+    chmod 0664 /sys/class/leds/aw20036_led/operating_mode
+    chown system system /sys/class/leds/aw20036_led/video_mode
+    chmod 0664 /sys/class/leds/aw20036_led/video_mode
+    chown system system /sys/class/leds/aw20036_led/all_white_brightness
+    chmod 0220 /sys/class/leds/aw20036_led/all_white_brightness
+    chown system system /sys/class/leds/aw20036_led/always_on
+    chmod 0664 /sys/class/leds/aw20036_led/always_on
+    chown system system /sys/class/leds/aw20036_led/single_brightness
+    chown system system /sys/class/leds/aw20036_led/vip_notification
+    chown system system /sys/class/leds/aw20036_led/dev_color
+    chown system system /mnt/vendor/persist/color
+    chmod 0444 /mnt/vendor/persist/color
+
+on post-fs-data
+    # Speaker amplifiers
+    chown system audio /dev/aw882xx_smartpa
+    chmod 0660 /dev/aw882xx_smartpa
+
+    # Fingerprint
+    chown system system /dev/goodix_fp
+    chmod 0660 /dev/goodix_fp
+    chown system system /sys/panel_feature/fp_status
+    chmod 0664 /sys/panel_feature/fp_status
+
+    # Camera calibration
+    mkdir /data/vendor/camera 0775 camera camera
+    copy /mnt/vendor/persist/camera/bokeh_caldata_uw_persist.bin /data/vendor/camera/bokeh_caldata_uw_persist.bin
+    chown cameraserver audio /data/vendor/camera/bokeh_caldata_uw_persist.bin
+    chmod 0444 /data/vendor/camera/bokeh_caldata_uw_persist.bin
+    copy /mnt/vendor/persist/camera/bokeh_caldata_tele_persist.bin /data/vendor/camera/bokeh_caldata_tele_persist.bin
+    chown cameraserver audio /data/vendor/camera/bokeh_caldata_tele_persist.bin
+    chmod 0444 /data/vendor/camera/bokeh_caldata_tele_persist.bin
+    copy /vendor/etc/camera/bokeh_caldata_uw_golden.bin /data/vendor/camera/bokeh_caldata_uw_golden.bin
+    chown cameraserver audio /data/vendor/camera/bokeh_caldata_uw_golden.bin
+    chmod 0444 /data/vendor/camera/bokeh_caldata_uw_golden.bin
+    copy /vendor/etc/camera/bokeh_caldata_tele_golden.bin /data/vendor/camera/bokeh_caldata_tele_golden.bin
+    chown cameraserver audio /data/vendor/camera/bokeh_caldata_tele_golden.bin
+    chmod 0444 /data/vendor/camera/bokeh_caldata_tele_golden.bin
+    copy /mnt/vendor/persist/camera/ois_caldata_wide_persist.bin /data/vendor/camera/ois_caldata_wide_persist.bin
+    chmod 0444 /data/vendor/camera/ois_caldata_wide_persist.bin
+    copy /mnt/vendor/persist/camera/ois_caldata_tele_persist.bin /data/vendor/camera/ois_caldata_tele_persist.bin
+    chmod 0444 /data/vendor/camera/ois_caldata_tele_persist.bin
+    chown system camera /dev/nt_cam_dev
+    chmod 0660 /dev/nt_cam_dev
+
+service vendor.keymint-strongbox /vendor/bin/hw/android.hardware.security.keymint-service.strongbox-thales
+    class early_hal
+    user vendor_thales_strongbox
+    group vendor_thales_strongbox
+    disabled
+
+service weaver_hal_service /vendor/bin/hw/android.hardware.weaver-service.thales
+    class hal
+    user vendor_thales_weaver
+    group vendor_thales_weaver
+    disabled

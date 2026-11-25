@@ -101,11 +101,13 @@ on init
     chmod 0660 /sys/fs/cgroup/memory/bg/tasks
 
 on post-fs
+    setprop sys.fsmount_completed 1
 
 on early-boot
     # set RLIMIT_MEMLOCK to 64KB
     setrlimit 8 65536 65536
     exec u:r:vendor_qti_init_shell:s0 -- /vendor/bin/init.qcom.early_boot.sh
+    exec u:r:vendor_qti_init_shell:s0 -- /vendor/bin/init.qti.can.sh
     setprop ro.sf.lcd_density ${vendor.display.lcd_density}
 
     chown system system /mnt/vendor/persist/data/pfm/licenses
@@ -122,6 +124,20 @@ on early-boot
     chmod 0664 /mnt/vendor/persist/data/pfm/licenses/store_4
 
 on boot
+    # sandro.wan@network, add for user build support qdss
+    #add permission for block_size, mem_type, mem_size nodes to collect diag over QDSS by ODL
+    #application by "oem_2902" group
+    chown root oem_2902 /sys/devices/platform/soc/10048000.tmc/coresight-tmc-etr/block_size
+    chmod 660 /sys/devices/platform/soc/10048000.tmc/coresight-tmc-etr/block_size
+    chown root oem_2902 /sys/devices/platform/soc/10048000.tmc/coresight-tmc-etr/buffer_size
+    chmod 660 /sys/devices/platform/soc/10048000.tmc/coresight-tmc-etr/buffer_size
+    chown system system /sys/bus/coresight/devices/coresight-tmc-etr/out_mode
+    chown system system /sys/bus/coresight/devices/coresight-tmc-etr/enable_sink
+    chown system system /sys/bus/coresight/devices/coresight-modem-diag/enable_source
+    chown root oem_2902 /sys/bus/coresight/reset_source_sink
+    chmod 660 /sys/bus/coresight/reset_source_sink
+    # add for user build support qdss end
+
     chown bluetooth bluetooth /sys/module/bluetooth_power/parameters/power
     chown bluetooth net_bt /sys/class/rfkill/rfkill0/type
     chown bluetooth net_bt /sys/class/rfkill/rfkill0/state
@@ -226,6 +242,9 @@ on boot
     chown system system /sys/class/backlight/panel1-backlight/brightness
     chown system system /sys/class/backlight/panel1-backlight/max_brightness
 
+    # NT_EDIT ARCA-173 LHBM add to update fp press status
+    chmod 0666 sys/panel_feature/fp_status
+
     # Allow access to sensors device attributes
     chown system system /sys/class/sensors/MPU6050-accel/enable
     chown system system /sys/class/sensors/MPU6050-accel/poll_delay
@@ -311,6 +330,8 @@ on post-fs-data
     mkdir /data/vendor/audio 0770 audio audio
     mkdir /data/vendor/audio_dsp 0770 media media
     mkdir /data/vendor/audio/audio_collector 0770 audio audio
+    mkdir /data/vendor/audio/audio_feature_stats 0770 audio audio
+    mkdir /data/vendor/audio/memlog 0770 audio audio
 
     # Create directory for audio delta files
     mkdir /data/vendor/audio/acdbdata 0770 media audio
@@ -441,23 +462,8 @@ service iop /system/vendor/bin/iop
     disabled
     socket iop seqpacket 0666 root system
 
-service qcomsysd /system/vendor/bin/qcom-system-daemon
-    class main
-    user root
-    group root diag oem_2901
-    disabled
-
-# Not launch qcomsysd process in USER BUILD
-on property:persist.vendor.qcomsysd.enabled=1 && property:ro.build.type=userdebug
-    enable qcomsysd
-
-on property:persist.vendor.qcomsysd.enabled=1 && property:ro.build.type=eng
-    enable qcomsysd
-
-on property:persist.vendor.qcomsysd.enabled=0
-    stop qcomsysd
-
 service vendor.ssr_setup /system/vendor/bin/ssr_setup
+    user root
     oneshot
     disabled
 
@@ -528,11 +534,6 @@ on property:sys.boot_completed=1
     chown media audio /sys/kernel/aud_dev/state
     write /sys/devices/virtual/cvp/cvp/boot 1
 
-# corefile limit
-on property:persist.debug.trace=1
-    mkdir /data/core 0777 root root
-    write /proc/sys/kernel/core_pattern "/data/core/%E.%p.%e"
-
 on property:vendor.media.target.version=*
     setprop vendor.sys.media.target.version ${vendor.media.target.version}
 
@@ -567,6 +568,7 @@ service vendor.wigig_supplicant /vendor/bin/hw/wpa_supplicant \
     -O/data/vendor/wifi/wigig_sockets -dd \
     -e/data/vendor/wifi/wigig_entropy.bin -g@android:wigig/wpa_wigig0 \
     -S wigigsvc
+    user root
     #   we will start as root and wpa_supplicant will switch to user wifi
     #   after setting up the capabilities required for WEXT
     #   user wifi
@@ -604,41 +606,49 @@ service vendor.sensingdaemon /vendor/bin/sensingdaemon
     disabled
 
 service dhcpcd_wlan0 /system/bin/dhcpcd -ABKLG
+    user root
     class late_start
     disabled
     oneshot
 
 service dhcpcd_bond0 /system/bin/dhcpcd -ABKLG
+    user root
     class late_start
     disabled
     oneshot
 
 service dhcpcd_p2p /system/bin/dhcpcd -ABKLG
+    user root
     class late_start
     disabled
     oneshot
 
 service dhcpcd_wigig0 /system/bin/dhcpcd -ABKLG
+    user root
     class late_start
     disabled
     oneshot
 
 service iprenew_wlan0 /system/bin/dhcpcd -n
+    user root
     class late_start
     disabled
     oneshot
 
 service iprenew_bond0 /system/bin/dhcpcd -n
+    user root
     class late_start
     disabled
     oneshot
 
 service iprenew_p2p /system/bin/dhcpcd -n
+    user root
     class late_start
     disabled
     oneshot
 
 service iprenew_wigig0 /system/bin/dhcpcd -n
+    user root
     class late_start
     disabled
     oneshot
@@ -677,11 +687,13 @@ on property:sys.shutdown.requested=*
     stop cnss-daemon
 
 service dhcpcd_bt-pan /system/bin/dhcpcd -BKLG
+    user root
     class late_start
     disabled
     oneshot
 
 service iprenew_bt-pan /system/bin/dhcpcd -n
+    user root
     class late_start
     disabled
     oneshot
@@ -706,6 +718,11 @@ service qcom-sh /vendor/bin/init.qcom.sh
     user root
     group root system radio
     oneshot
+# Remove since is deprecated but throws AVC denial.
+# service crashdata-sh /vendor/bin/init.qcom.crashdata.sh
+#    class late_start
+#    user root
+#    oneshot
 
 service qcom-post-boot /vendor/bin/init.qcom.post_boot.sh
     class late_start
@@ -714,8 +731,16 @@ service qcom-post-boot /vendor/bin/init.qcom.post_boot.sh
     disabled
     oneshot
 
+service qti-testscripts /system/bin/sh /product/etc/init.qcom.testscripts.sh
+    class late_start
+    user root
+    disabled
+    oneshot
+    seclabel u:r:qti-testscripts:s0
+
 on property:sys.boot_completed=1
     start qcom-post-boot
+    start qti-testscripts
 
 on property:ro.vendor.ril.mbn_copy_completed=1
     write /data/vendor/radio/copy_complete 1
@@ -764,21 +789,8 @@ service vendor.ssr_diag /system/vendor/bin/ssr_diag
     group system
     disabled
 
-service diag_mdlog_start /system/vendor/bin/diag_mdlog
-    class late_start
-    user shell
-    group system oem_2901 sdcard_rw sdcard_r media_rw
-    disabled
-    oneshot
-
-service diag_mdlog_stop /system/vendor/bin/diag_mdlog -k
-    class late_start
-    user shell
-    group system oem_2901 sdcard_rw sdcard_r media_rw
-    disabled
-    oneshot
-
 service qlogd /system/xbin/qlogd
+    user root
     socket qlogd stream 0662 system system
     class main
     disabled
@@ -858,14 +870,11 @@ service time_daemon /vendor/bin/time_daemon
     group system
     capabilities SYS_TIME
 
-# Set vendor-ril lib path based on Meta version
-on property:vendor.rild.libpath=*
-    setprop rild.libpath ${vendor.rild.libpath}
-
 on property:ro.vendor.radio.noril=*
     setprop ro.radio.noril ${ro.vendor.radio.noril}
 
 service vendor.power_off_alarm /vendor/bin/power_off_alarm
+    user root
     class core
     group system
     disabled
@@ -889,6 +898,7 @@ on property:vendor.chre.enabled=0
    stop chre
 
 service bugreport /system/bin/dumpstate -d -p -B -z -o /data/user_de/0/com.android.shell/files/bugreports/bugreport
+    user root
     class main
     disabled
     oneshot

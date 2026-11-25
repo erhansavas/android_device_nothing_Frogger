@@ -433,6 +433,7 @@ PRODUCT_COPY_FILES += \
 
 # Vendor init
 PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/rootdir/etc/init.frogger.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.frogger.rc \
     $(LOCAL_PATH)/rootdir/etc/init.qcom.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.qcom.rc \
     $(LOCAL_PATH)/rootdir/etc/init.target.rc:$(TARGET_COPY_OUT_VENDOR)/etc/init/hw/init.target.rc
 
