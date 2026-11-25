@@ -67,6 +67,7 @@ TARGET_FS_CONFIG_GEN := $(DEVICE_PATH)/config.fs
 BOARD_KERNEL_IMAGE_NAME := Image
 BOARD_USES_GENERIC_KERNEL_IMAGE := true
 BOARD_USES_QCOM_MERGE_DTBS_SCRIPT := true
+TARGET_MERGE_DTBS_WILDCARD := volcano
 
 BOARD_KERNEL_BASE        := 0x00000000
 BOARD_KERNEL_PAGESIZE    := 4096
@@ -74,7 +75,9 @@ BOARD_KERNEL_PAGESIZE    := 4096
 TARGET_KERNEL_SOURCE := kernel/nothing/sm7635
 TARGET_KERNEL_CONFIG := \
     gki_defconfig \
-    vendor/fps_GKI.config
+    vendor/pineapple_GKI.config \
+    vendor/Frogger.config
+TARGET_KERNEL_ADDITIONAL_FLAGS := NT_PROJECT=Frogger
 
 BOARD_KERNEL_CMDLINE := \
     nosoftlockup \
@@ -121,7 +124,6 @@ TARGET_KERNEL_EXT_MODULES := \
     qcom/opensource/wlan/platform
 
 TARGET_KERNEL_EXT_MODULES += \
-    nxp/opensource/driver \
     qcom/opensource/audio-kernel \
     qcom/opensource/bt-kernel \
     qcom/opensource/camera-kernel \
@@ -133,6 +135,7 @@ TARGET_KERNEL_EXT_MODULES += \
     qcom/opensource/datarmnet-ext/wlan \
     qcom/opensource/display-drivers/msm \
     qcom/opensource/eva-kernel \
+    qcom/opensource/fingerprint \
     qcom/opensource/graphics-kernel \
     qcom/opensource/mm-sys-kernel/ubwcp \
     qcom/opensource/spu-kernel \
@@ -140,8 +143,7 @@ TARGET_KERNEL_EXT_MODULES += \
     qcom/opensource/video-driver \
     qcom/opensource/wlan/qcacld-3.0/.peach_v2 \
     qcom/opensource/wlan/qcacld-3.0/.qca6750 \
-    qcom/opensource/wlan/qcacld-3.0/.wcn6450 \
-    samsung_slsi/nfc/driver
+    qcom/opensource/wlan/qcacld-3.0/.wcn6450
 
 # Metadata
 BOARD_USES_METADATA_PARTITION := true
