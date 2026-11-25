@@ -68,33 +68,12 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     audio.bluetooth.default \
-    audio.primary.volcano \
     audio.r_submix.default \
     audio.usb.default \
     sound_trigger.primary.volcano
 
 PRODUCT_PACKAGES += \
-    audioadsprpcd
-
-PRODUCT_PACKAGES += \
-    lib_bt_aptx \
-    lib_bt_ble \
-    lib_bt_bundle \
-    libagm_compress_plugin \
-    libagm_mixer_plugin \
-    libagm_pcm_plugin \
-    libbatterylistener \
-    libcustomva_intf \
-    libfmpal \
-    libhfp_pal \
-    libhotword_intf \
-    libqcompostprocbundle \
-    libqcomvisualizer \
-    libqcomvoiceprocessing \
-    libvolumelistener
-
-PRODUCT_PACKAGES += \
-    firmware_aw_cali.bin_symlink
+    vendor.qti.audio-adsprpc-service.rc
 
 CONFIG_SKU_OUT_DIR := $(TARGET_COPY_OUT_VENDOR)/etc/audio/sku_volcano
 
