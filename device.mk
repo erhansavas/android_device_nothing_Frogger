@@ -100,8 +100,8 @@ CONFIG_SKU_OUT_DIR := $(TARGET_COPY_OUT_VENDOR)/etc/audio/sku_volcano
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/audio_policy_configuration.xml:$(CONFIG_SKU_OUT_DIR)/audio_policy_configuration.xml \
-    $(LOCAL_PATH)/audio/mixer_paths_volcano_mtp.xml:$(CONFIG_SKU_OUT_DIR)/mixer_paths_volcano_mtp.xml \
-    $(LOCAL_PATH)/audio/resourcemanager_volcano_mtp.xml:$(CONFIG_SKU_OUT_DIR)/resourcemanager_volcano_mtp.xml \
+    $(LOCAL_PATH)/audio/mixer_paths_volcano_qrd.xml:$(CONFIG_SKU_OUT_DIR)/mixer_paths_volcano_qrd.xml \
+    $(LOCAL_PATH)/audio/resourcemanager_volcano_qrd.xml:$(CONFIG_SKU_OUT_DIR)/resourcemanager_volcano_qrd.xml \
     $(LOCAL_PATH)/audio/usecaseKvManager.xml:$(TARGET_COPY_OUT_VENDOR)/etc/usecaseKvManager.xml
 
 AUDIO_HAL_DIR := hardware/qcom-caf/sm8650/audio/primary-hal
@@ -109,7 +109,7 @@ CONFIG_HAL_SRC_DIR := $(AUDIO_HAL_DIR)/configs/volcano
 CONFIG_PAL_SRC_DIR := $(AUDIO_HAL_DIR)/../pal/configs/volcano
 
 PRODUCT_COPY_FILES += \
-    $(CONFIG_HAL_SRC_DIR)/audio_effects.xml:$(CONFIG_SKU_OUT_DIR)/audio_effects.xml \
+    $(LOCAL_PATH)/audio/audio_effects.xml:$(CONFIG_SKU_OUT_DIR)/audio_effects.xml \
     $(CONFIG_HAL_SRC_DIR)/microphone_characteristics.xml:$(TARGET_COPY_OUT_VENDOR)/etc/microphone_characteristics.xml \
     $(CONFIG_PAL_SRC_DIR)/card-defs.xml:$(TARGET_COPY_OUT_VENDOR)/etc/card-defs.xml \
     $(AUDIO_HAL_DIR)/configs/common/media_codecs_vendor_audio.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_codecs_vendor_audio.xml \
