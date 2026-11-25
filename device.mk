@@ -177,6 +177,12 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/rootdir/etc/fstab.default:$(TARGET_COPY_OUT_RECOVERY)/root/first_stage_ramdisk/fstab.default \
     $(LOCAL_PATH)/rootdir/etc/fstab.default:$(TARGET_COPY_OUT_VENDOR_RAMDISK)/first_stage_ramdisk/fstab.default
 
+# Glyph
+$(call soong_config_set,nothing_glyph,device,phone4a)
+
+PRODUCT_PACKAGES += \
+    ParanoidGlyph
+
 # GPS
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.location.gps.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.location.gps.xml
@@ -207,6 +213,10 @@ PRODUCT_PACKAGES += \
     ipacm \
     IPACM_cfg.xml \
     IPACM_Filter_cfg.xml
+
+# Lights
+PRODUCT_PACKAGES += \
+    android.hardware.lights-service.glyph
 
 # Lineage Health
 PRODUCT_PACKAGES += \
