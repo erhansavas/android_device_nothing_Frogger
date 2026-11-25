@@ -1,0 +1,5 @@
+# Audio
+type nt_audio_aw_device, dev_type;
+
+# Camera
+type nt_cam_device, dev_type;

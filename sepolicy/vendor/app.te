@@ -1,0 +1,2 @@
+# Apps probe the QSPM HAL through the graphics libraries; QCOM policy already hides the HIDL lookup
+dontaudit appdomain vendor_hal_qspmhal_service:service_manager find;

@@ -1,0 +1,9 @@
+# Audio
+/dev/aw882xx_smartpa    u:object_r:nt_audio_aw_device:s0
+
+# Camera
+/dev/nt_cam_dev    u:object_r:nt_cam_device:s0
+
+# NFC
+/dev/st54spi              u:object_r:nfc_device:s0
+/vendor/bin/st_getcplc    u:object_r:hal_nfc_default_exec:s0

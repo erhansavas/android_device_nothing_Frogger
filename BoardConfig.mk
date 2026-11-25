@@ -209,6 +209,8 @@ VENDOR_SECURITY_PATCH := 2026-04-05
 include device/qcom/sepolicy_vndr/SEPolicy.mk
 include hardware/nothing/sepolicy/nt-sepolicy.mk
 
+BOARD_VENDOR_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy/vendor
+
 # Verified Boot
 STOCK_SECURITY_PATCH_TIMESTAMP := $(shell date -d 'TZ="GMT" $(VENDOR_SECURITY_PATCH)' +%s)
 BOARD_AVB_ENABLE := true
