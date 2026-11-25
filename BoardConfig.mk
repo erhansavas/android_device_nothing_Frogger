@@ -250,6 +250,12 @@ BOARD_AVB_VBMETA_VENDOR_ROLLBACK_INDEX_LOCATION := 4
 # VINTF
 DEVICE_MATRIX_FILE := hardware/qcom-caf/common/compatibility_matrix.xml
 
+ODM_MANIFEST_SKUS := EEA JPN ROW TUR
+ODM_MANIFEST_EEA_FILES := $(DEVICE_PATH)/vintf/manifest_EEA.xml
+ODM_MANIFEST_JPN_FILES := $(DEVICE_PATH)/vintf/manifest_JPN.xml
+ODM_MANIFEST_ROW_FILES := $(DEVICE_PATH)/vintf/manifest_ROW.xml
+ODM_MANIFEST_TUR_FILES := $(DEVICE_PATH)/vintf/manifest_TUR.xml
+
 DEVICE_MANIFEST_SKUS := volcano
 DEVICE_MANIFEST_VOLCANO_FILES := \
     $(DEVICE_PATH)/vintf/manifest.xml \
