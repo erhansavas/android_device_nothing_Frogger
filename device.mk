@@ -48,8 +48,11 @@ PRODUCT_PACKAGES += \
     otapreopt_script
 
 # API
-PRODUCT_SHIPPING_API_LEVEL := 35
+PRODUCT_SHIPPING_API_LEVEL := 36
 BOARD_SHIPPING_API_LEVEL := 34
+
+# The stock vendor libraries are built for 4 KiB pages
+PRODUCT_CHECK_PREBUILT_MAX_PAGE_SIZE := false
 
 # Attestation
 PRODUCT_COPY_FILES += \
@@ -356,7 +359,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.sensor.stepdetector.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/sku_volcano/android.hardware.sensor.stepdetector.xml
 
 # Screen density
-TARGET_SCREEN_DENSITY := 440
+TARGET_SCREEN_DENSITY := 480
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \

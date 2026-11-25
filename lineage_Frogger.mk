@@ -13,18 +13,15 @@ PRODUCT_NAME := lineage_Frogger
 PRODUCT_DEVICE := Frogger
 PRODUCT_MANUFACTURER := Nothing
 PRODUCT_BRAND := Nothing
-PRODUCT_MODEL := Nothing 6
+PRODUCT_MODEL := A069
 
 PRODUCT_BRAND_FOR_ATTESTATION := Nothing
-PRODUCT_MODEL_FOR_ATTESTATION := Nothing 6
+PRODUCT_MODEL_FOR_ATTESTATION := A069
 PRODUCT_NAME_FOR_ATTESTATION := Frogger
 
 PRODUCT_GMS_CLIENTID_BASE := android-nothing
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
-    BuildDesc="qssi_64-user 16 Frogger.QREL.16.115.0 WS1R release-keys" \
-    BuildFingerprint=Nothing/Frogger/Frogger:16/Frogger.QREL.16.115.0/WS1R:user/release-keys \
     DeviceName=Frogger \
     DeviceProduct=Frogger \
-    SystemDevice=Frogger \
-    SystemName=Frogger
+    BuildFingerprint=Nothing/Frogger/Frogger:17/CQ2A.260522.002-CP2A.260605.016/2610232145:user/release-keys
