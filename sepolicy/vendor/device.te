@@ -1,8 +1,0 @@
-# Camera
-type vl53l1_device, dev_type;
-
-# Common
-type vendor_traceability_block_device, dev_type;
-
-# tctd
-type vendor_mfg_block_device, dev_type;
