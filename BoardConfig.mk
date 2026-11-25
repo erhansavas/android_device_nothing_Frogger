@@ -207,6 +207,7 @@ VENDOR_SECURITY_PATCH := 2026-04-05
 
 # Sepolicy
 include device/qcom/sepolicy_vndr/SEPolicy.mk
+include hardware/nothing/sepolicy/nt-sepolicy.mk
 
 # Verified Boot
 STOCK_SECURITY_PATCH_TIMESTAMP := $(shell date -d 'TZ="GMT" $(VENDOR_SECURITY_PATCH)' +%s)

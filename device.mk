@@ -363,7 +363,8 @@ TARGET_SCREEN_DENSITY := 480
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
-    $(LOCAL_PATH)
+    $(LOCAL_PATH) \
+    hardware/nothing
 
 # Telephony
 PRODUCT_PACKAGES += \
