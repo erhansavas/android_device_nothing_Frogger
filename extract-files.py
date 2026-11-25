@@ -35,6 +35,7 @@ lib_fixups: lib_fixups_user_type = {
     **lib_fixups,
     (
         'com.qualcomm.qti.dpm.api@1.0',
+        'libntf',
         'vendor.qti.diaghal@1.0',
         'vendor.qti.hardware.dpmaidlservice-V1-ndk',
         'vendor.qti.hardware.qccsyshal@1.0',
@@ -50,14 +51,15 @@ lib_fixups: lib_fixups_user_type = {
 
 
 blob_fixups: blob_fixups_user_type = {
+    (
+        'vendor/lib64/libarcsoft_triple_sat.old.so',
+        'vendor/lib64/libarcsoft_triple_zoomtranslator.old.so',
+    ): blob_fixup()
+        .fix_soname(),
     'system_ext/etc/seccomp_policy/tcmd.policy': blob_fixup()
         .add_line_if_missing('lseek: 1'),
-    'system/framework/WfdCommon.jar': blob_fixup()
-        .apktool_patch('blob-patches/WfdCommon.patch'),
     'system_ext/lib64/libwfdservice.so': blob_fixup()
         .replace_needed('android.media.audio.common.types-V4-cpp.so', 'android.media.audio.common.types-V5-cpp.so'),
-    'system_ext/lib64/vendor.qti.hardware.qccsyshal@1.2-halimpl.so': blob_fixup()
-        .replace_needed('libprotobuf-cpp-full.so', 'libprotobuf-cpp-full-21.7.so'),
     (
         'vendor/bin/qcc-vendor',
         'vendor/bin/qms',
@@ -67,55 +69,58 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/lib64/libqms_client.so',
     ): blob_fixup()
         .add_needed('libbinder_shim.so'),
-    'vendor/etc/init/tctd.rc': blob_fixup()
-        .regex_replace('.+seclabel.+\n', ''),
+    (
+        'vendor/etc/init/nicmd.rc',
+        'vendor/etc/init/vendor.dpmd.rc',
+    ): blob_fixup()
+        .regex_replace(r'(service vendor\.(?:dpmd|nicmd) .+\n)', r'\1    user root\n'),
     'vendor/etc/seccomp_policy/wfdhdcphalservice.policy': blob_fixup()
         .add_line_if_missing('rt_tgsigqueueinfo: 1'),
     (
+        'vendor/lib64/libcapiv2uvvendor.so',
+        'vendor/lib64/liblistensoundmodel2vendor.so',
+        'vendor/lib64/libVoiceSdk.so',
+    ): blob_fixup().replace_needed(
+        'libtensorflowlite_c.so',
+        'libtensorflowlite_c_vendor.so',
+    ),
+    (
+        'vendor/bin/poweropt-service',
+        'vendor/lib64/libdpps.so',
+        'vendor/lib64/libpowercore.so',
+        'vendor/lib64/libsnapdragoncolor-manager.so',
+    ): blob_fixup()
+        .replace_needed('libtinyxml2.so', 'libtinyxml2-v34.so'),
+    # C5.0 camera blobs mix allocator V1 and V2; Soong allows one version per graph, so use V2 everywhere
+    (
+        'vendor/lib64/camera/com.qti.eeprom.frogger_imx355_uw_eeprom.so',
+        'vendor/lib64/camera/com.qti.eeprom.frogger_s5kgn9_wide_eeprom.so',
+        'vendor/lib64/camera/com.qti.eeprom.frogger_s5kgn9_wide_v2_eeprom.so',
+        'vendor/lib64/camera/com.qti.eeprom.frogger_s5kjn5_tele_eeprom.so',
+        'vendor/lib64/camera/com.qti.eeprom.frogger_s5kjn5_tele_v2_eeprom.so',
+        'vendor/lib64/camera/com.qti.eeprom.frogger_s5kjn5_tele_v3_eeprom.so',
+        'vendor/lib64/camera/com.qti.eeprom.frogger_s5kkd1_front_eeprom.so',
         'vendor/lib64/camera/com.qti.eeprom.gt24p128c2csli_imx766.so',
         'vendor/lib64/camera/com.qti.eeprom.gt24p64b_imx688.so',
         'vendor/lib64/camera/com.qti.eeprom.irs2381c_polar.so',
         'vendor/lib64/camera/com.qti.eeprom.truly_cmb433.so',
         'vendor/lib64/camera/com.qti.ois.bu63169gwz.so',
         'vendor/lib64/camera/com.qti.ois.dw9784.so',
-        'vendor/lib64/camera/com.qti.sensor.camano_imx688.so',
         'vendor/lib64/camera/com.qti.sensor.camano_imx766.so',
-        'vendor/lib64/camera/com.qti.sensor.camano_ov64b40.so',
         'vendor/lib64/camera/com.qti.sensor.camano_s5k3m5.so',
-        'vendor/lib64/camera/com.qti.sensor.frogger_imx896.so',
-        'vendor/lib64/camera/com.qti.sensor.imx362.so',
-        'vendor/lib64/camera/com.qti.sensor.imx363.so',
-        'vendor/lib64/camera/com.qti.sensor.imx376.so',
-        'vendor/lib64/camera/com.qti.sensor.imx386.so',
-        'vendor/lib64/camera/com.qti.sensor.imx476.so',
-        'vendor/lib64/camera/com.qti.sensor.imx481.so',
-        'vendor/lib64/camera/com.qti.sensor.imx519.so',
-        'vendor/lib64/camera/com.qti.sensor.imx563.so',
-        'vendor/lib64/camera/com.qti.sensor.imx576.so',
-        'vendor/lib64/camera/com.qti.sensor.imx586.so',
-        'vendor/lib64/camera/com.qti.sensor.imx588.so',
-        'vendor/lib64/camera/com.qti.sensor.imx686.so',
-        'vendor/lib64/camera/com.qti.sensor.imx688.so',
-        'vendor/lib64/camera/com.qti.sensor.imx766.so',
-        'vendor/lib64/camera/com.qti.sensor.max7366_6dof.so',
-        'vendor/lib64/camera/com.qti.sensor.max7366_eyetrack.so',
-        'vendor/lib64/camera/com.qti.sensor.max7366_ov6211.so',
-        'vendor/lib64/camera/com.qti.sensor.max7366_ov9282.so',
-        'vendor/lib64/camera/com.qti.sensor.ov13855.so',
-        'vendor/lib64/camera/com.qti.sensor.ov13b10.so',
-        'vendor/lib64/camera/com.qti.sensor.ov64b40.so',
-        'vendor/lib64/camera/com.qti.sensor.ov7251.so',
-        'vendor/lib64/camera/com.qti.sensor.s5k2l7.so',
-        'vendor/lib64/camera/com.qti.sensor.s5k2x5sp.so',
-        'vendor/lib64/camera/com.qti.sensor.s5k33dxx.so',
+        'vendor/lib64/camera/com.qti.sensor.frogger_imx355_uw.so',
+        'vendor/lib64/camera/com.qti.sensor.frogger_s5kgn9_main.so',
+        'vendor/lib64/camera/com.qti.sensor.frogger_s5kgn9_main_v2.so',
+        'vendor/lib64/camera/com.qti.sensor.frogger_s5kjn5_tele.so',
+        'vendor/lib64/camera/com.qti.sensor.frogger_s5kjn5_tele_v2.so',
+        'vendor/lib64/camera/com.qti.sensor.frogger_s5kjn5_tele_v3.so',
+        'vendor/lib64/camera/com.qti.sensor.frogger_s5kkd1_front.so',
         'vendor/lib64/camera/com.qti.sensor.s5k3m5.so',
-        'vendor/lib64/camera/com.qti.sensor.s5k3p9.so',
-        'vendor/lib64/camera/com.qti.sensor.s5k4h7.so',
-        'vendor/lib64/camera/com.qti.sensor.s5k5e9yu05.so',
-        'vendor/lib64/camera/com.qti.sensor.s5k5e9yx04.so',
         'vendor/lib64/camera/com.qti.sensor.s5khp1s.so',
         'vendor/lib64/camera/com.qti.sensor.s5kjd1sp.so',
-        'vendor/lib64/camera/com.qti.sensor.s5kkd1sp.so',
+        'vendor/lib64/camera/components/com.morpho.node.eisv2.so',
+        'vendor/lib64/camera/components/com.morpho.node.eisv3.so',
+        'vendor/lib64/camera/components/com.morpho.node.gme.so',
         'vendor/lib64/camera/components/com.qti.node.depth.so',
         'vendor/lib64/camera/components/com.qti.node.depthprovider.so',
         'vendor/lib64/camera/components/com.qti.node.dewarp.so',
@@ -128,6 +133,7 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/lib64/camera/components/com.qti.node.hdr10phist.so',
         'vendor/lib64/camera/components/com.qti.node.itofpreprocess.so',
         'vendor/lib64/camera/components/com.qti.node.ml.so',
+        'vendor/lib64/camera/components/com.qti.node.mlinference.so',
         'vendor/lib64/camera/components/com.qti.node.seg.so',
         'vendor/lib64/camera/components/com.qti.node.swec.so',
         'vendor/lib64/camera/components/com.qti.node.swregistration.so',
@@ -169,13 +175,10 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/lib64/hw/camera.qcom.milos.so',
         'vendor/lib64/hw/camera.qcom.so',
         'vendor/lib64/hw/com.qti.chi.offline.so',
-        'vendor/lib64/hw/com.qti.chi.override.so',
         'vendor/lib64/libcamerapostproc.so',
         'vendor/lib64/libcamxhwnodecontext.so',
         'vendor/lib64/libcamxifestriping.so',
-        'vendor/lib64/libcamximageformatutils.so',
         'vendor/lib64/libcamxncsdatafactory.so',
-        'vendor/lib64/libchifeature2.so',
         'vendor/lib64/libcommonchiutils.so',
         'vendor/lib64/libhme.so',
         'vendor/lib64/libipebpsstriping.so',
@@ -191,6 +194,7 @@ blob_fixups: blob_fixups_user_type = {
         'vendor/lib64/libmmcamera_mfnr.so',
         'vendor/lib64/libmmcamera_mfnr_t4.so',
         'vendor/lib64/libmmcamera_pdpc.so',
+        'vendor/lib64/libmmcamera_pnc.so',
         'vendor/lib64/libopestriping.so',
         'vendor/lib64/libtfestriping.so',
         'vendor/lib64/libubifocus.so',
@@ -202,28 +206,34 @@ blob_fixups: blob_fixups_user_type = {
         'android.hardware.graphics.allocator-V2-ndk.so',
     ),
     (
-        'vendor/lib64/libcapiv2uvvendor.so',
-        'vendor/lib64/liblistensoundmodel2vendor.so',
-        'vendor/lib64/libVoiceSdk.so',
+        'vendor/lib64/hw/com.qti.chi.override.so',
+        'vendor/lib64/hw/libproviderextension.so',
+        'vendor/lib64/libcamximageformatutils.so',
+        'vendor/lib64/libchifeature2.so',
+    ): blob_fixup()
+        .remove_needed('android.hardware.graphics.allocator-V1-ndk.so'),
+    # The Thales StrongBox is built for KeyMint V3; the default keymint utils library now links V4
+    (
+        'vendor/bin/hw/android.hardware.security.keymint-service.strongbox-thales',
+        'vendor/lib64/libjc_keymint-thales.so',
     ): blob_fixup().replace_needed(
-        'libtensorflowlite_c.so',
-        'libtensorflowlite_c_vendor.so',
+        'lib_android_keymaster_keymint_utils.so',
+        'lib_android_keymaster_keymint_utils_V3.so',
     ),
-    (
-        'vendor/lib64/libdpps.so',
-        'vendor/lib64/libsnapdragoncolor-manager.so',
-    ): blob_fixup()
-        .replace_needed('libtinyxml2.so', 'libtinyxml2-v34.so'),
-    (
-        'vendor/lib64/libmfnr_raw_api.so',
-        'vendor/lib64/libTclAISuperfine.so',
-        'vendor/lib64/libTclImage_ImageEngine.so',
-    ): blob_fixup()
+    'vendor/lib64/libarcsoft_dark_vision_raw.so': blob_fixup()
+        .clear_symbol_version('remote_register_buf')
+        .clear_symbol_version('rpcmem_alloc')
+        .clear_symbol_version('rpcmem_free'),
+    'vendor/lib64/libmorpho_RapidEffect.so': blob_fixup()
         .clear_symbol_version('AHardwareBuffer_allocate')
         .clear_symbol_version('AHardwareBuffer_describe')
-        .clear_symbol_version('AHardwareBuffer_lock')
+        .clear_symbol_version('AHardwareBuffer_lockPlanes')
         .clear_symbol_version('AHardwareBuffer_release')
         .clear_symbol_version('AHardwareBuffer_unlock'),
+    'vendor/lib64/libntcamallocator.so': blob_fixup()
+        .add_needed('libui_shim.so'),
+    'vendor/lib64/libntcamskia.so': blob_fixup()
+        .add_needed('libnativewindow.so'),
     'vendor/lib64/libperfgluelayer.so': blob_fixup()
         .sig_replace('87 08 00 94', '1F 20 03 D5'),
     'vendor/lib64/libqcodec2_core.so': blob_fixup()
