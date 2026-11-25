@@ -160,12 +160,12 @@ PRODUCT_PACKAGES += \
 
 # Fingerprint
 PRODUCT_PACKAGES += \
-    android.hardware.biometrics.fingerprint-service.lineage
+    android.hardware.biometrics.fingerprint-service.nothing
+
+$(call soong_config_set,NOTHING_BIOMETRICS_FINGERPRINT,IMPL_VER,V2)
 
 PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.fingerprint.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.fingerprint.xml
-
-$(call soong_config_set,lineage_hardware_biometrics,fpdata_path,/data/vendor_de/{}/fpdata)
 
 # Fstab
 PRODUCT_COPY_FILES += \
