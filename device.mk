@@ -311,8 +311,6 @@ PRODUCT_BUILD_PVMFW_IMAGE := true
 PRODUCT_PACKAGES += \
     android.hardware.power-service-qti
 
-$(call soong_config_set,qtipower,tap_to_wake_node,/sys/bus/spi/devices/spi0.0/gesture_wakeup)
-
 # QSPA
 PRODUCT_PACKAGES += \
     vendor.qti.qspa-service \
