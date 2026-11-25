@@ -4,10 +4,6 @@
     "target_path": "hardware/nothing"
   },
   {
-    "repository": "android_hardware_samsung_slsi_nfc",
-    "target_path": "hardware/samsung_slsi/nfc"
-  },
-  {
     "repository": "android_kernel_nothing_sm7635",
     "target_path": "kernel/nothing/sm7635"
   },

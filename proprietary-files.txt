@@ -1370,11 +1370,21 @@ vendor/etc/init/init.qti.media.rc
 vendor/etc/public.libraries.txt
 
 # NFC
+vendor/bin/hw/android.hardware.nfc-service-st
+vendor/bin/st_getcplc
+vendor/etc/init/init.st.felica.rc
+vendor/etc/init/nfc-service-st.rc
+vendor/etc/init/st_getcplc.rc
+vendor/etc/libnfc-hal-st-st54l-felica.conf
+vendor/etc/libnfc-hal-st.conf
+vendor/etc/libnfc-nci-felica.conf
 vendor/etc/libnfc-nci.conf
-vendor/etc/libnfc-sec-vendor.conf
-vendor/etc/sec_s3nrn4v_hwreg.bin
-vendor/etc/sec_s3nrn4v_swreg.bin
-vendor/firmware/sec_s3nrn4v_firmware.bin
+vendor/etc/st21nfc_conf_base.txt
+vendor/etc/st54j_conf.txt
+vendor/etc/st54l_conf.txt
+vendor/etc/st54l_conf_felica.txt
+vendor/lib64/libstfactory-vendor.so
+vendor/lib64/nfc_nci.st21nfc.st.so
 
 # NFC firmware
 vendor/firmware/st21nfc_fw.bin
